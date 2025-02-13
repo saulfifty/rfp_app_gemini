@@ -1,1 +1,5 @@
-pip freeze > requirements.txt
+streamlit
+openai
+pandas
+sqlite3
+PyPDF2
