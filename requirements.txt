@@ -3,3 +3,6 @@ openai
 pandas
 PyPDF2
 python-dotenv
+transformers
+rembg
+Pillow
