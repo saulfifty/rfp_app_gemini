@@ -1,11 +1,7 @@
-from dotenv import load_dotenv
-import os
 import requests
 import re
 import streamlit as st
 
-# Cargar las variables de entorno
-load_dotenv()
 
 # Obtener la clave API de Gemini AI
 GEMINI_API_KEY = st.secrets["GEMINI"]["API_KEY"]
@@ -29,9 +25,7 @@ def analyze_rfp_gemini(rfp_text, category, prompt):
                 min_len = max(50, int(max_len * 0.5))
 
             try:
-                # Obtener la clave API de Gemini AI desde las variables de entorno
-                GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-
+                
                 if not GEMINI_API_KEY:
                     raise ValueError("La clave API de Gemini no está definida en las variables de entorno.")
 
