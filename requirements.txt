@@ -6,3 +6,4 @@ python-dotenv
 transformers
 rembg
 Pillow
+pysqlite3-binary
