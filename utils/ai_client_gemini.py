@@ -2,12 +2,13 @@ from dotenv import load_dotenv
 import os
 import requests
 import re
+import streamlit as st
 
 # Cargar las variables de entorno
 load_dotenv()
 
 # Obtener la clave API de Gemini AI
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+GEMINI_API_KEY = st.secrets["GEMINI"]["API_KEY"]
 
 def analyze_rfp_gemini(rfp_text, category, prompt):
     print(f"Generando análisis para {category}...")
