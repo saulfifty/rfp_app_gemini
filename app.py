@@ -222,4 +222,9 @@ else:
         username = st.text_input("Nombre de Usuario")
         password = st.text_input("Contraseña", type="password")
         if st.button("Iniciar Sesión"):
-            login(username, password)
+            if verificar_credenciales(username, password):
+                st.session_state["logged_in"] = True
+                st.session_state["user"] = username
+                st.rerun()  # Versión estable de rerun (a partir de Streamlit 1.30)
+            else:
+                st.error("Nombre de usuario o contraseña incorrectos.")
