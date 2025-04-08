@@ -175,6 +175,9 @@ if st.session_state["logged_in"]:
         if "analysis_cache" in st.session_state and st.session_state.get("current_page", "") in st.session_state["analysis_cache"]:
             resumen_editable = st.text_area("Resumen Generado por IA", st.session_state["analysis_cache"][st.session_state["current_page"]], height=300)
             
+            if resumen_editable != st.session_state["analysis_cache"][st.session_state["current_page"]]:
+                st.session_state["analysis_cache"][st.session_state["current_page"]] = resumen_editable
+
             col1, col2 = st.columns(2)
 
             with col1:
@@ -200,6 +203,13 @@ if st.session_state["logged_in"]:
                     file_name=f"{current_page} generado con IA.pdf",
                     mime="application/pdf"
                 )
+        
+        # Para restaurar la respuesta modificada cuando el usuario vuelve a la categoría:
+        if current_page in st.session_state["analysis_cache"] and st.session_state["analysis_cache"][current_page]:
+            # Ya está almacenada una respuesta modificada previamente
+            respuesta_modificada = st.session_state["analysis_cache"][current_page]
+        else:
+            respuesta_modificada = ""
 
         if current_page in st.session_state["analysis_cache"] and st.session_state["analysis_cache"][current_page]:
             if st.button("Generar pasos con IA"):
