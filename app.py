@@ -1,7 +1,6 @@
 import streamlit as st
 import time
 import io
-import unicodedata
 from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
 from database.db_manager import init_db, registrar_usuario, verificar_credenciales, save_rfp_data, save_response_data
@@ -204,9 +203,9 @@ if st.session_state["logged_in"]:
                     <div class="spinner-container"><div class="lds-dual-ring"></div></div>
                     """, unsafe_allow_html=True)
 
-                summary = function_mapping[current_page](st.session_state["rfp_text"])
-                st.session_state["analysis_cache"][current_page] = summary
-                st.session_state["show_steps_button"] = True
+                    summary = function_mapping[current_page](st.session_state["rfp_text"])
+                    st.session_state["analysis_cache"][current_page] = summary
+                    st.session_state["show_steps_button"] = True
 
         # Mostrar análisis si existe para la categoría actual
         if "analysis_cache" in st.session_state and st.session_state.get("current_page", "") in st.session_state["analysis_cache"]:
