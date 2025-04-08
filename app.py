@@ -48,6 +48,7 @@ def login(username, password):
     if verificar_credenciales(username, password):
         st.session_state["logged_in"] = True
         st.session_state["user"] = username
+        st.experimental_rerun()
     else:
         st.error("Nombre de usuario o contraseña incorrectos.")
 
@@ -88,6 +89,8 @@ if st.session_state["logged_in"]:
         st.image("BID_AI_Logotype.png", use_container_width=True)
     with col2:
         st.title("Análisis de RFPs con IA")
+        st.toast(f"Bienvenido, {st.session_state['user']} 👋", icon="✅")
+
     
     # Menú lateral
     with st.sidebar:
@@ -220,10 +223,3 @@ else:
         password = st.text_input("Contraseña", type="password")
         if st.button("Iniciar Sesión"):
             login(username, password)
-        
-        if st.session_state.get("login_success"):
-            st.success(f"Inicio de sesión exitoso. Bienvenido, {st.session_state['user']}.")
-            time.sleep(2)
-            st.session_state["logged_in"] = True
-            del st.session_state["login_success"]
-            st.experimental_rerun()
