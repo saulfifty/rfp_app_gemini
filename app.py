@@ -42,15 +42,8 @@ if "analysis_cache" not in st.session_state:
     st.session_state["analysis_cache"] = {}
 if "respuesta_guardada" not in st.session_state:
     st.session_state["respuesta_guardada"] = False
-
-# Función de inicio de sesión
-def login(username, password):
-    if verificar_credenciales(username, password):
-        st.session_state["logged_in"] = True
-        st.session_state["user"] = username
-        st.experimental_rerun()
-    else:
-        st.error("Nombre de usuario o contraseña incorrectos.")
+if "show_welcome_message" not in st.session_state:
+    st.session_state["show_welcome_message"] = True
 
 # Función para cerrar sesión
 def logout():
@@ -58,6 +51,7 @@ def logout():
     st.session_state["user"] = None
     st.session_state["current_category"] = "Carga y Configuración"
     st.session_state["current_page"] = "Cargar RFP"
+    st.session_state["show_welcome_message"] = True
 
 def clean_text(text):
     return ''.join(c if ord(c) < 256 else '?' for c in text)
@@ -89,7 +83,9 @@ if st.session_state["logged_in"]:
         st.image("BID_AI_Logotype.png", use_container_width=True)
     with col2:
         st.title("Análisis de RFPs con IA")
-        st.toast(f"Bienvenido, {st.session_state['user']} 👋", icon="✅")
+        if st.session_state["show_welcome_message"]:
+            st.toast(f"Bienvenido, {st.session_state['user']} 👋", icon="✅")
+            st.session_state["show_welcome_message"] = False
 
     
     # Menú lateral
