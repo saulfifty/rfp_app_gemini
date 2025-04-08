@@ -167,42 +167,6 @@ if st.session_state["logged_in"]:
 
                 with st.spinner("⏳ Generando respuesta con IA..."):
 
-                    # Añadir spinner animado personalizado
-                    st.markdown("""
-                    <style>
-                    .spinner-container {
-                        display: flex;
-                        justify-content: center;
-                        margin: 30px 0;
-                    }
-                    .lds-dual-ring {
-                        display: inline-block;
-                        width: 64px;
-                        height: 64px;
-                    }
-                    .lds-dual-ring:after {
-                        content: " ";
-                        display: block;
-                        width: 46px;
-                        height: 46px;
-                        margin: 1px;
-                        border-radius: 50%;
-                        border: 5px solid #4096FF;
-                        border-color: #4096FF transparent #4096FF transparent;
-                        animation: lds-dual-ring 1.2s linear infinite;
-                    }
-                    @keyframes lds-dual-ring {
-                        0% {
-                            transform: rotate(0deg);
-                        }
-                        100% {
-                            transform: rotate(360deg);
-                        }
-                    }
-                    </style>
-                    <div class="spinner-container"><div class="lds-dual-ring"></div></div>
-                    """, unsafe_allow_html=True)
-
                     summary = function_mapping[current_page](st.session_state["rfp_text"])
                     st.session_state["analysis_cache"][current_page] = summary
                     st.session_state["show_steps_button"] = True
