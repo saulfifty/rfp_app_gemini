@@ -79,13 +79,15 @@ def reset_analysis():
 if st.session_state["logged_in"]:
     col1, col2 = st.columns([1, 8])
     with col1:
-        st.image("BID_AI_Logotype.png", use_container_width=True)
+        if st.get_option("theme.base") == "dark":
+            st.image("BID_AI_Logotype_dark.png", use_container_width=True)
+        else:
+            st.image("BID_AI_Logotype_Light.jpeg", use_container_width=True)
     with col2:
         st.title("Análisis de RFPs con IA")
         if st.session_state["show_welcome_message"]:
             st.toast(f"Bienvenido, {st.session_state['user']} 👋", icon="✅")
             st.session_state["show_welcome_message"] = False
-
     
     # Menú lateral
     with st.sidebar:
@@ -100,13 +102,17 @@ if st.session_state["logged_in"]:
     st.markdown("""
         <style>
         .stButton button, .stDownloadButton button {
-            height: 60px; /* Ajusta la altura según sea necesario */
-            width: 100%;  /* Para que ocupen el ancho completo de la columna */
-            margin: 5px 0; /* Espaciado entre botones */
-            font-size: 16px; /* Tamaño de letra uniforme */
+            height: 60px;
+            width: 100%;
+            margin: 5px 0;
+            font-size: 16px;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 8px;
         }
         </style>
-        """, unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
     
     # Submenú con cajitas
     st.subheader(f"{st.session_state['current_category']}")
