@@ -191,10 +191,10 @@ def actualizar_documento_usuario(doc_id, nuevo_titulo, nuevo_contenido, usuario_
         print("Error al actualizar documento:", e)
         return False
     
-def obtener_user_id_por_username(email):
+def obtener_user_id_por_email(email):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
+    cursor.execute("SELECT id FROM usuarios WHERE email = ?", (email,))
     result = cursor.fetchone()
     conn.close()
     if result:

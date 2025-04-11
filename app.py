@@ -5,7 +5,7 @@ from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
 from database.db_manager import (get_connection, registrar_usuario, verificar_credenciales, 
     guardar_rfp, guardar_respuesta_ia, guardar_documento_usuario, obtener_documentos_usuario, 
-    actualizar_documento_usuario, obtener_user_id_por_username, es_correo_valido)
+    actualizar_documento_usuario, obtener_user_id_por_email, es_correo_valido)
 from utils.ai_client_gemini import (
     get_ai_summary_and_steps_gemini, get_ai_alignment_strategy_gemini, get_ai_competitive_advantage_gemini,
     get_ai_participation_decision_gemini, get_ai_detailed_understanding_gemini, get_ai_pain_points_gemini,
@@ -139,7 +139,7 @@ if st.session_state["logged_in"]:
             text = extract_text_from_pdf("uploaded.pdf")
             st.session_state["rfp_text"] = text
             st.text_area("Contenido del RFP", text, height=200)
-            user_id = obtener_user_id_por_username(st.session_state["user"])
+            user_id = obtener_user_id_por_email(st.session_state["user"])
             rfp_id = guardar_rfp(user_id, uploaded_file.name, text)
             if rfp_id:
                 st.session_state["rfp_id"] = rfp_id
@@ -151,7 +151,7 @@ if st.session_state["logged_in"]:
     elif st.session_state["current_page"] == "Mis Documentos":
         st.subheader("📁 Tus Documentos")
 
-        user_id = obtener_user_id_por_username(st.session_state["user"])
+        user_id = obtener_user_id_por_email(st.session_state["user"])
 
         if user_id:
             documentos = obtener_documentos_usuario(user_id)
@@ -288,12 +288,12 @@ else:
 
     elif menu == "Inicio de Sesión":
         st.subheader("Inicio de Sesión")
-        username = st.text_input("Nombre de Usuario")
+        email = st.text_input("Correo Electrónico")
         password = st.text_input("Contraseña", type="password")
         if st.button("Iniciar Sesión"):
-            if verificar_credenciales(username, password):
+            if verificar_credenciales(email, password):
                 st.session_state["logged_in"] = True
-                st.session_state["user"] = username
-                st.rerun()  # Versión estable de rerun (a partir de Streamlit 1.30)
+                st.session_state["user"] = email
+                st.rerun()
             else:
-                st.error("Nombre de usuario o contraseña incorrectos.")
+                st.error("Correo electrónico o contraseña incorrectos.")
