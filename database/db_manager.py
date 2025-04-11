@@ -1,17 +1,9 @@
 import sqlite3
 import hashlib
 import re
-import os
 
-# Ruta del archivo de base de datos
 db_file = 'rfp_data.db'
 
-# Elimina la base de datos anterior si existe
-if os.path.exists(db_file):
-    os.remove(db_file)
-    print(f"Base de datos {db_file} eliminada.")
-
-# Conectar a la base de datos (se creará si no existe)
 conn = sqlite3.connect(db_file)
 cursor = conn.cursor()
 
@@ -77,7 +69,7 @@ def registrar_usuario(nombre_usuario, email, contrasena):
     cursor = conn.cursor()
     hashed_password = hashlib.sha256(contrasena.encode()).hexdigest()
     try:
-        cursor.execute("INSERT INTO usuarios (nombre_usuario, email, contrasena) VALUES (?, ?, ?)", (nombre_usuario, email, hashed_password))
+        cursor.execute("INSERT INTO usuarios (nombre, email, contrasena) VALUES (?, ?, ?)", (nombre_usuario, email, hashed_password))
         conn.commit()
         return True
     except sqlite3.IntegrityError:
