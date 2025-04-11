@@ -1,8 +1,14 @@
 import sqlite3
 import hashlib
 import re
+import os
 
 db_file = 'rfp_data.db'
+
+# Elimina la base de datos anterior si existe
+if os.path.exists(db_file):
+    os.remove(db_file)
+    print(f"Base de datos {db_file} eliminada.")
 
 # Conectar a la base de datos (se creará si no existe)
 conn = sqlite3.connect(db_file)
