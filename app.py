@@ -1,11 +1,12 @@
 import streamlit as st
 import time
 import io
+from datetime import datetime
 from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
 from database.db_manager import (get_connection, registrar_usuario, verificar_credenciales, 
-    guardar_rfp, guardar_respuesta_ia, guardar_documento_usuario, obtener_documentos_usuario, 
-    actualizar_documento_usuario, obtener_user_id_por_email, es_correo_valido)
+    guardar_rfp, guardar_respuesta_ia, guardar_documento_usuario, obtener_documento_usuario, 
+    actualizar_documento_usuario, obtener_user_id_por_email, es_correo_valido, obtener_todos_documentos_por_usuario)
 from utils.ai_client_gemini import (
     get_ai_summary_and_steps_gemini, get_ai_alignment_strategy_gemini, get_ai_competitive_advantage_gemini,
     get_ai_participation_decision_gemini, get_ai_detailed_understanding_gemini, get_ai_pain_points_gemini,
@@ -146,34 +147,57 @@ if st.session_state["logged_in"]:
                 st.success("RFP almacenada correctamente.")
             else:
                 st.error("Error al almacenar la RFP.")
-                
 
     elif st.session_state["current_page"] == "Mis Documentos":
-        st.subheader("📁 Tus Documentos")
+        st.subheader("📁 Mis Documentos")
 
         user_id = obtener_user_id_por_email(st.session_state["user"])
 
         if user_id:
-            documentos = obtener_documentos_usuario(user_id)
+            # Crear campos de búsqueda para el título y la fecha
+            titulo_busqueda = st.text_input("Buscar por título de RFP", "")
+            fecha_inicio = st.date_input("Fecha de inicio", min_value=datetime(2000, 1, 1).date())
+            fecha_fin = st.date_input("Fecha de fin", max_value=datetime.today().date())
+
+            # Obtener todos los documentos del usuario
+            documentos = obtener_todos_documentos_por_usuario(user_id)
+
             if documentos:
+                # Filtrar documentos según los criterios de búsqueda
+                documentos_filtrados = []
                 for doc in documentos:
                     doc_id, rfp_id, titulo, contenido, fecha_creacion = doc
 
-                    with st.expander(f"{titulo} (Creado el {fecha_creacion})"):
-                        nuevo_titulo = st.text_input(f"Título para doc ID {doc_id}", value=titulo, key=f"titulo_{doc_id}")
-                        nuevo_contenido = st.text_area(f"Contenido para doc ID {doc_id}", value=contenido, height=200, key=f"contenido_{doc_id}")
-                        if st.button("Actualizar", key=f"btn_actualizar_{doc_id}"):
-                            success = actualizar_documento_usuario(doc_id, nuevo_titulo, nuevo_contenido)
-                            if success:
-                                st.success("Documento actualizado correctamente.")
-                                st.rerun()
-                            else:
-                                st.error("Hubo un error al actualizar el documento.")
+                    # Convertir la fecha_creacion a un objeto de fecha para compararla
+                    fecha_creacion_obj = datetime.strptime(fecha_creacion, "%Y-%m-%d %H:%M:%S").date()
+
+                    # Verificar si el título y la fecha cumplen con los filtros
+                    if (titulo_busqueda.lower() in titulo.lower() and 
+                        fecha_inicio <= fecha_creacion_obj <= fecha_fin):
+                        documentos_filtrados.append(doc)
+
+                # Mostrar los documentos filtrados
+                if documentos_filtrados:
+                    for doc in documentos_filtrados:
+                        doc_id, rfp_id, titulo, contenido, fecha_creacion = doc
+
+                        with st.expander(f"{titulo} (Creado el {fecha_creacion})"):
+                            nuevo_titulo = st.text_input(f"Título para doc ID {doc_id}", value=titulo, key=f"titulo_{doc_id}")
+                            nuevo_contenido = st.text_area(f"Contenido para doc ID {doc_id}", value=contenido, height=200, key=f"contenido_{doc_id}")
+                            if st.button("Actualizar", key=f"btn_actualizar_{doc_id}"):
+                                success = actualizar_documento_usuario(doc_id, nuevo_titulo, nuevo_contenido)
+                                if success:
+                                    st.success("Documento actualizado correctamente.")
+                                    st.rerun()
+                                else:
+                                    st.error("Hubo un error al actualizar el documento.")
+                else:
+                    st.info("No se encontraron documentos que coincidan con los filtros.")
             else:
                 st.info("No tienes documentos almacenados aún.")
-
         else:
             st.error("No se pudo encontrar el usuario en la base de datos.")
+
     
     function_mapping = {
         "Análisis rápido": get_ai_summary_and_steps_gemini,

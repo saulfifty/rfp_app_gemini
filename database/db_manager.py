@@ -1,14 +1,8 @@
 import sqlite3
 import hashlib
 import re
-import os
 
 db_file = 'rfp_data.db'
-
-# Elimina la base de datos anterior si existe
-if os.path.exists(db_file):
-    os.remove(db_file)
-    print(f"Base de datos {db_file} eliminada.")
 
 # Conectar a la base de datos (se creará si no existe)
 conn = sqlite3.connect(db_file)
@@ -138,8 +132,39 @@ def guardar_documento_usuario(rfp_id, titulo, contenido):
     except Exception as e:
         print("Error al guardar documento:", e)
         return False
+    
+def obtener_todos_documentos_por_usuario(usuario_id):
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
 
-def obtener_documentos_usuario(usuario_id, rfp_id):
+        cursor.execute('''
+            SELECT id FROM rfps WHERE usuario_id = ?
+        ''', (usuario_id,))
+        rfp_ids = cursor.fetchall()
+
+        if not rfp_ids:
+            conn.close()
+            return []
+
+        rfp_ids = [rfp[0] for rfp in rfp_ids]
+
+        cursor.execute('''
+            SELECT documentos_usuario.id, documentos_usuario.rfp_id, 
+                   documentos_usuario.titulo, documentos_usuario.contenido, 
+                   documentos_usuario.fecha_creacion
+            FROM documentos_usuario
+            WHERE documentos_usuario.rfp_id IN ({})
+        '''.format(','.join('?' * len(rfp_ids))), rfp_ids)
+
+        documentos = cursor.fetchall()
+        conn.close()
+        return documentos
+    except Exception as e:
+        print("Error al obtener documentos del usuario:", e)
+        return []
+
+def obtener_documento_usuario(usuario_id, rfp_id):
     try:
         conn = get_connection()
         cursor = conn.cursor()
