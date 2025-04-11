@@ -3,7 +3,9 @@ import time
 import io
 from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
-from database.db_manager import init_db, registrar_usuario, verificar_credenciales, save_rfp_data, save_response_data
+from database.db_manager import (get_connection, registrar_usuario, verificar_credenciales, 
+    guardar_rfp, guardar_respuesta_ia, guardar_documento_usuario, obtener_documentos_usuario, 
+    actualizar_documento_usuario, obtener_user_id_por_username)
 from utils.ai_client_gemini import (
     get_ai_summary_and_steps_gemini, get_ai_alignment_strategy_gemini, get_ai_competitive_advantage_gemini,
     get_ai_participation_decision_gemini, get_ai_detailed_understanding_gemini, get_ai_pain_points_gemini,
@@ -14,11 +16,11 @@ from utils.ai_client_gemini import (
 )
 
 # Inicializar la base de datos
-init_db()
+get_connection()
 
 # Definir las categorías y subcategorías del menú
 menu_options = {
-    "Carga y Configuración": ["Cargar RFP", "Configuración General"],
+    "Carga y Configuración": ["Cargar RFP", "Configuración General", "Mis Documentos"],
     "Evaluación Inicial": ["Análisis rápido", "Alineación estratégica", "Ventaja Competitiva", "Decisión de Participar"],
     "Análisis Profundo": ["Comprensión Detallada", "Identificación de 'dolores'", "Preguntas Aclaratorias", "Evaluación de Recursos"],
     "Desarrollo de la Propuesta": ["Estructura del Índice", "Resumen ejecutivo", "Solución Propuesta", "Beneficios y Valor Añadido", "Experiencia y Credenciales", "Equipo de Proyecto", "Cronograma y Presupuesto", "Cumplimiento de Requisitos"],
@@ -137,8 +139,41 @@ if st.session_state["logged_in"]:
             text = extract_text_from_pdf("uploaded.pdf")
             st.session_state["rfp_text"] = text
             st.text_area("Contenido del RFP", text, height=200)
-            save_rfp_data(uploaded_file.name, text, "", "")
-            st.success("Datos almacenados correctamente.")
+            user_id = obtener_user_id_por_username(st.session_state["user"])
+            rfp_id = guardar_rfp(user_id, uploaded_file.name, text)
+            if rfp_id:
+                st.session_state["rfp_id"] = rfp_id
+                st.success("RFP almacenada correctamente.")
+            else:
+                st.error("Error al almacenar la RFP.")
+                
+
+    elif st.session_state["current_page"] == "Mis Documentos":
+        st.subheader("📁 Tus Documentos")
+
+        user_id = obtener_user_id_por_username(st.session_state["user"])
+
+        if user_id:
+            documentos = obtener_documentos_usuario(user_id)
+            if documentos:
+                for doc in documentos:
+                    doc_id, rfp_id, titulo, contenido, fecha_creacion = doc
+
+                    with st.expander(f"{titulo} (Creado el {fecha_creacion})"):
+                        nuevo_titulo = st.text_input(f"Título para doc ID {doc_id}", value=titulo, key=f"titulo_{doc_id}")
+                        nuevo_contenido = st.text_area(f"Contenido para doc ID {doc_id}", value=contenido, height=200, key=f"contenido_{doc_id}")
+                        if st.button("Actualizar", key=f"btn_actualizar_{doc_id}"):
+                            success = actualizar_documento_usuario(doc_id, nuevo_titulo, nuevo_contenido)
+                            if success:
+                                st.success("Documento actualizado correctamente.")
+                                st.rerun()
+                            else:
+                                st.error("Hubo un error al actualizar el documento.")
+            else:
+                st.info("No tienes documentos almacenados aún.")
+
+        else:
+            st.error("No se pudo encontrar el usuario en la base de datos.")
     
     function_mapping = {
         "Análisis rápido": get_ai_summary_and_steps_gemini,
@@ -188,10 +223,15 @@ if st.session_state["logged_in"]:
 
             with col1:
                 if st.button("Guardar en la Base de Datos"):
-                    rfp_id = st.session_state.get("rfp_id", "ID_desconocido")
+                    rfp_id = st.session_state.get("rfp_id", None)
+                    titulo = f"{current_page} generado con IA"
                     pasos_sugeridos = generate_follow_up_steps_gemini(st.session_state["rfp_text"], "Análisis")
-                    save_response_data(rfp_id, resumen_editable, pasos_sugeridos)
-                    st.session_state["respuesta_guardada"] = True
+                    
+                    if guardar_documento_usuario(rfp_id, titulo, resumen_editable):
+                        st.session_state["respuesta_guardada"] = True
+                        st.session_state["analysis_cache"][current_page] = resumen_editable
+                    else:
+                        st.error("Error al guardar la respuesta en la base de datos.")
 
             if st.session_state.get("respuesta_guardada"):
                 success_message = st.empty()
