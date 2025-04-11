@@ -5,7 +5,7 @@ from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
 from database.db_manager import (get_connection, registrar_usuario, verificar_credenciales, 
     guardar_rfp, guardar_respuesta_ia, guardar_documento_usuario, obtener_documentos_usuario, 
-    actualizar_documento_usuario, obtener_user_id_por_username)
+    actualizar_documento_usuario, obtener_user_id_por_username, es_correo_valido)
 from utils.ai_client_gemini import (
     get_ai_summary_and_steps_gemini, get_ai_alignment_strategy_gemini, get_ai_competitive_advantage_gemini,
     get_ai_participation_decision_gemini, get_ai_detailed_understanding_gemini, get_ai_pain_points_gemini,
@@ -268,7 +268,7 @@ else:
     if menu == "Registro":
         st.subheader("Registro de Usuario")
 
-        email = st.text_input("Correo Electrónico", type="email")
+        email = st.text_input("Correo Electrónico")
         username = st.text_input("Nombre de Usuario")
         password = st.text_input("Contraseña", type="password")
         confirmar_password = st.text_input("Confirmar Contraseña", type="password")
@@ -276,6 +276,8 @@ else:
         if st.button("Registrar"):
             if not email or not username or not password or not confirmar_password:
                 st.error("Todos los campos son obligatorios.")
+            elif not es_correo_valido(email):
+                st.error("El correo electrónico no es válido.")
             elif password != confirmar_password:
                 st.error("Las contraseñas no coinciden.")
             elif verificar_credenciales(username, password):

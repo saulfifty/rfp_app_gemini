@@ -1,5 +1,6 @@
 import sqlite3
 import hashlib
+import re
 
 def get_connection():
     return sqlite3.connect("rfp_data.db", check_same_thread=False)
@@ -133,3 +134,7 @@ def obtener_user_id_por_username(email):
     if result:
         return result[0]
     return None
+
+def es_correo_valido(email):
+    regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    return re.match(regex, email)
