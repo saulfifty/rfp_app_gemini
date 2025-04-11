@@ -267,10 +267,23 @@ else:
     menu = st.sidebar.selectbox("Menú", ["Inicio de Sesión", "Registro"])
     if menu == "Registro":
         st.subheader("Registro de Usuario")
+
+        email = st.text_input("Correo Electrónico", type="email")
         username = st.text_input("Nombre de Usuario")
         password = st.text_input("Contraseña", type="password")
+        confirmar_password = st.text_input("Confirmar Contraseña", type="password")
+        
         if st.button("Registrar"):
-            registrar_usuario(username, password)
+            if not email or not username or not password or not confirmar_password:
+                st.error("Todos los campos son obligatorios.")
+            elif password != confirmar_password:
+                st.error("Las contraseñas no coinciden.")
+            elif verificar_credenciales(username, password):
+                st.error("El nombre de usuario ya existe.")
+            else:
+                registrar_usuario(username, email, password)
+                st.success("Usuario registrado correctamente.")
+
     elif menu == "Inicio de Sesión":
         st.subheader("Inicio de Sesión")
         username = st.text_input("Nombre de Usuario")
