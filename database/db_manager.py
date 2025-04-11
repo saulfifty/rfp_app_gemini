@@ -1,6 +1,73 @@
 import sqlite3
 import hashlib
 import re
+import os
+
+# Ruta del archivo de base de datos
+db_file = 'rfp_data.db'
+
+# Elimina la base de datos anterior si existe
+if os.path.exists(db_file):
+    os.remove(db_file)
+    print(f"Base de datos {db_file} eliminada.")
+
+# Conectar a la base de datos (se creará si no existe)
+conn = sqlite3.connect(db_file)
+cursor = conn.cursor()
+
+# Crear las tablas si no existen
+cursor.execute('''CREATE TABLE IF NOT EXISTS usuarios (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    contrasena TEXT NOT NULL
+);''')
+
+cursor.execute('''CREATE TABLE IF NOT EXISTS rfps (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    usuario_id INTEGER,
+    nombre_archivo TEXT,
+    contenido TEXT,
+    fecha_subida TEXT,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);''')
+
+cursor.execute('''CREATE TABLE IF NOT EXISTS categorias (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT UNIQUE NOT NULL
+);''')
+
+cursor.execute('''CREATE TABLE IF NOT EXISTS subcategorias (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    categoria_id INTEGER,
+    nombre TEXT NOT NULL,
+    FOREIGN KEY (categoria_id) REFERENCES categorias(id) ON DELETE CASCADE
+);''')
+
+cursor.execute('''CREATE TABLE IF NOT EXISTS respuestas_ia (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    rfp_id INTEGER,
+    subcategoria_id INTEGER,
+    respuesta TEXT,
+    fecha_generacion TEXT,
+    FOREIGN KEY (rfp_id) REFERENCES rfps(id) ON DELETE CASCADE,
+    FOREIGN KEY (subcategoria_id) REFERENCES subcategorias(id) ON DELETE CASCADE
+);''')
+
+cursor.execute('''CREATE TABLE IF NOT EXISTS documentos_usuario (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    rfp_id INTEGER,
+    titulo TEXT,
+    contenido TEXT,
+    fecha_creacion TEXT,
+    FOREIGN KEY (rfp_id) REFERENCES rfps(id) ON DELETE CASCADE
+);''')
+
+# Guardar los cambios y cerrar la conexión
+conn.commit()
+conn.close()
+
+print("Base de datos y tablas creadas correctamente.")
 
 def get_connection():
     return sqlite3.connect("rfp_data.db", check_same_thread=False)
