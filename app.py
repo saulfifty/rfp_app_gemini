@@ -185,7 +185,7 @@ if st.session_state["logged_in"]:
                             nuevo_titulo = st.text_input(f"Título para doc ID {doc_id}", value=titulo, key=f"titulo_{doc_id}")
                             nuevo_contenido = st.text_area(f"Contenido para doc ID {doc_id}", value=contenido, height=200, key=f"contenido_{doc_id}")
                             if st.button("Actualizar", key=f"btn_actualizar_{doc_id}"):
-                                success = actualizar_documento_usuario(doc_id, nuevo_titulo, nuevo_contenido)
+                                success = actualizar_documento_usuario(doc_id, nuevo_titulo, nuevo_contenido, user_id)
                                 if success:
                                     st.success("Documento actualizado correctamente.")
                                     st.rerun()
