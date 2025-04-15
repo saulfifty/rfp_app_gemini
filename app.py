@@ -132,18 +132,23 @@ if st.session_state["logged_in"]:
         for category in menu_options.keys():
             icon_class = obtener_icono(category)
             is_active = (st.session_state["current_category"] == category)
-            active_class = "active-category" if is_active else ""
 
-            # Muestra el botón con ícono
-            if st.button(f"{category}", key=f"btn_{category}"):
+            category_button = st.markdown(
+                f"""
+                <div class="sidebar-category { 'active-category' if is_active else '' }" 
+                    onclick="window.location.href = '/?category={category}'"
+                    style="cursor:pointer; padding: 10px; border-radius: 5px;">
+                    <i class="{icon_class} fa-fw"></i> {category}
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            # Detectar clics en los botones usando hack de query params o usar form con botones si necesitas funcionalidad más robusta.
+            if st.button(f"{category}", key=f"select_{category}", help=category):
                 st.session_state["current_category"] = category
                 st.session_state["current_page"] = menu_options[category][0]
-
-            # Añade el icono vía HTML (encima del botón o como marcador visual)
-            st.markdown(
-                f'<div class="{active_class}"><i class="{icon_class} fa-fw"></i> {category}</div>',
-                unsafe_allow_html=True
-            )
+                break
 
     components.html("""
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-jQMnUe1tbvLIszv1qKmAg5qJOC9IxA1I3szTgEDUaz4BxTrjw5mwoq+TQQHzlRVmL0D5JApztEt9M2rFu/Un4g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
