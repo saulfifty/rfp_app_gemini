@@ -6,7 +6,7 @@ import streamlit as st
 # Obtener la clave API de Gemini AI
 GEMINI_API_KEY = st.secrets["GEMINI"]["API_KEY"]
 
-def analyze_rfp_gemini(rfp_text, category, prompt):
+def analyze_rfp_gemini(rfp_text, category, prompt, language="español"):
     print(f"Generando análisis para {category}...")
     try:
         chunk_size = 1024
@@ -29,27 +29,23 @@ def analyze_rfp_gemini(rfp_text, category, prompt):
                 if not GEMINI_API_KEY:
                     raise ValueError("La clave API de Gemini no está definida en las variables de entorno.")
 
-                # Realizar la llamada HTTP directamente con requests
                 url = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}'
                 headers = {'Content-Type': 'application/json'}
                 data = {
                     "contents": [
                         {
                             "parts": [
-                                {"text": f"{category}: {chunk}"}
+                                {"text": f"{category}: {chunk}\n\n{prompt}\n\nResponde en {language} de forma clara y profesional."}
                             ]
                         }
                     ]
                 }
 
-                # Realizar la solicitud POST
                 response = requests.post(url, headers=headers, json=data)
                 
-                # Verificar que la respuesta sea exitosa
                 if response.status_code == 200:
                     response_data = response.json()
 
-                    # Verificar si la respuesta contiene texto
                     if response_data and 'candidates' in response_data:
                         summary_text += response_data['candidates'][0]['content']['parts'][0]['text'] + " "
                     else:
@@ -111,7 +107,11 @@ def get_ai_summary_and_steps_gemini(rfp_text, category="Análisis Rápido"):
     return analyze_rfp_gemini(rfp_text, category, prompt)
 
 def get_ai_alignment_strategy_gemini(rfp_text, category="Alineación Estratégica"):
-    prompt = "Como experto en análisis estratégico, evalúa la alineación del proyecto descrito en la RFP con la experiencia de la empresa. Destaca fortalezas y debilidades potenciales, y proporciona pasos claros para mejorar el ajuste estratégico."
+    prompt = (
+        "Como experto en análisis estratégico, evalúa la alineación del proyecto descrito en la RFP con la experiencia de la empresa. "
+        "Destaca fortalezas y debilidades potenciales, y proporciona pasos claros para mejorar el ajuste estratégico. "
+        "Responde en español de forma clara y profesional."
+    )
     return analyze_rfp_gemini(rfp_text, category, prompt)
 
 
