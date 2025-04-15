@@ -8,3 +8,4 @@ rembg
 Pillow
 pysqlite3-binary
 fpdf
+mdclense

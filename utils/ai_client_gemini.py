@@ -1,9 +1,7 @@
 import requests
-import re
 import streamlit as st
+from mdclense.parser import MarkdownParser
 
-
-# Obtener la clave API de Gemini AI
 GEMINI_API_KEY = st.secrets["GEMINI"]["API_KEY"]
 
 def analyze_rfp_gemini(rfp_text, category, prompt, language="español"):
@@ -93,33 +91,9 @@ def generate_follow_up_steps_gemini(summary_text, category):
 
 def clean_gemini_response(text):
 
-    # Eliminar tuplas tipo ('Texto')
-    if text.startswith("('") and text.endswith("')"):
-        text = text[2:-2]
-
-    # Reemplazar múltiples espacios por uno solo
-    text = re.sub(r'\s+', ' ', text)
-
-    # Insertar saltos de línea antes de encabezados comunes
-    secciones = [
-        "Fortalezas", "Debilidades", "Oportunidades", "Amenazas",
-        "Recomendaciones", "Riesgos", "Conclusión", "Observaciones",
-        "Evaluación", "Ventajas", "Desventajas"
-    ]
-    for palabra in secciones:
-        text = re.sub(rf'(?<!\n)(\b{palabra}\b\s*:?)(?!\*\*)', r'\n\n### \1', text, flags=re.IGNORECASE)
-
-    # Reemplazar listas con guiones o asteriscos por formato Markdown
-    text = re.sub(r'[\*\-]\s+', r'- ', text)
-
-    # Corregir negritas mal aplicadas
-    text = re.sub(r'\*\*([^*]+)\*\*', r'**\1**', text)
-
-    # Asegurar doble salto entre párrafos
-    text = re.sub(r'\.\s+', '.\n\n', text)
-
-    return text.strip()
-
+    parser = MarkdownParser()
+    cleaned_text = parser.parse(text)
+    return cleaned_text.strip()
 
 def get_ai_summary_and_steps_gemini(rfp_text, category="Análisis Rápido"):
     prompt = "Como experto en análisis de RFP, proporciona un resumen completo y profesional del siguiente documento. Resume los objetivos principales, el alcance y los requisitos clave. Luego, enumera los pasos sugeridos para abordar cada punto importante."
