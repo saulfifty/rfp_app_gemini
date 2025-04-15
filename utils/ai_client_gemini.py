@@ -92,23 +92,31 @@ def generate_follow_up_steps_gemini(summary_text, category):
     return gemini_prompt
 
 def clean_gemini_response(text):
-    import re
 
+    # Eliminar tuplas tipo ('Texto')
     if text.startswith("('") and text.endswith("')"):
         text = text[2:-2]
 
-    text = re.sub(r'\n{2,}', '\n\n', text)
+    # Reemplazar múltiples espacios por uno solo
+    text = re.sub(r'\s+', ' ', text)
 
-    text = re.sub(r'(?<!\n)([A-ZÁÉÍÓÚÑ][^:\n]{3,}):', r'\n\n### \1:', text)
+    # Insertar saltos de línea antes de encabezados comunes
+    secciones = [
+        "Fortalezas", "Debilidades", "Oportunidades", "Amenazas",
+        "Recomendaciones", "Riesgos", "Conclusión", "Observaciones",
+        "Evaluación", "Ventajas", "Desventajas"
+    ]
+    for palabra in secciones:
+        text = re.sub(rf'(?<!\n)(\b{palabra}\b\s*:?)(?!\*\*)', r'\n\n### \1', text, flags=re.IGNORECASE)
 
-    text = re.sub(r'[\*\-]\s+', r'- ', text)  # uniformidad
-    text = re.sub(r'(- .+?)(?=\s*- |\Z)', r'\1\n', text, flags=re.DOTALL)
+    # Reemplazar listas con guiones o asteriscos por formato Markdown
+    text = re.sub(r'[\*\-]\s+', r'- ', text)
 
-    text = re.sub(r'\*\*([^*]+)\*\*', r'**\1**', text)  # asegurar negritas válidas
+    # Corregir negritas mal aplicadas
+    text = re.sub(r'\*\*([^*]+)\*\*', r'**\1**', text)
 
-    text = re.sub(r'(?<!\n)\s{2,}(?=[A-Z])', '\n\n', text)
-
-    text = re.sub(r'[ \t]+', ' ', text)
+    # Asegurar doble salto entre párrafos
+    text = re.sub(r'\.\s+', '.\n\n', text)
 
     return text.strip()
 
