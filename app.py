@@ -269,9 +269,15 @@ if st.session_state["logged_in"]:
     for i, subcategory in enumerate(sub_categories):
         col = [col1, col2, col3, col4][i % 4]
         icon = obtener_icono(subcategory)
-        btn_html = f'<i class="{icon} fa-fw"></i> {subcategory}'
-        if col.button(btn_html, key=subcategory, use_container_width=True, help=subcategory, unsafe_allow_html=True):
-            st.session_state["current_page"] = subcategory
+        with col:
+            st.markdown(
+                f'<div style="text-align:center; margin-bottom: 4px;">'
+                f'<i class="{icon} fa-2x" style="color:#4a4a4a;"></i>'
+                f'</div>',
+                unsafe_allow_html=True
+            )
+            if st.button(subcategory, key=subcategory, use_container_width=True, help=subcategory):
+                st.session_state["current_page"] = subcategory
 
     # Resaltar la página actual
     st.markdown(f"**Página actual:** {st.session_state['current_page']}")
