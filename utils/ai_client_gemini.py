@@ -92,15 +92,26 @@ def generate_follow_up_steps_gemini(summary_text, category):
     return gemini_prompt
 
 def clean_gemini_response(text):
-    text = re.sub(r'\n{2,}', '\n', text)
-    
-    text = re.sub(r'\*\*(.*?)\*\*', r'**\1**', text)
-    
-    text = re.sub(r'\* ', '\n- ', text)
+    import re
 
-    text = re.sub(r'\s+', ' ', text).strip()
-    
-    return text
+    if text.startswith("('") and text.endswith("')"):
+        text = text[2:-2]
+
+    text = re.sub(r'\n{2,}', '\n\n', text)
+
+    text = re.sub(r'(?<!\n)([A-ZÁÉÍÓÚÑ][^:\n]{3,}):', r'\n\n### \1:', text)
+
+    text = re.sub(r'[\*\-]\s+', r'- ', text)  # uniformidad
+    text = re.sub(r'(- .+?)(?=\s*- |\Z)', r'\1\n', text, flags=re.DOTALL)
+
+    text = re.sub(r'\*\*([^*]+)\*\*', r'**\1**', text)  # asegurar negritas válidas
+
+    text = re.sub(r'(?<!\n)\s{2,}(?=[A-Z])', '\n\n', text)
+
+    text = re.sub(r'[ \t]+', ' ', text)
+
+    return text.strip()
+
 
 def get_ai_summary_and_steps_gemini(rfp_text, category="Análisis Rápido"):
     prompt = "Como experto en análisis de RFP, proporciona un resumen completo y profesional del siguiente documento. Resume los objetivos principales, el alcance y los requisitos clave. Luego, enumera los pasos sugeridos para abordar cada punto importante."
