@@ -1,6 +1,7 @@
 import streamlit as st
 import time
 import io
+import streamlit.components.v1 as components
 from datetime import datetime
 from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
@@ -80,6 +81,37 @@ def reset_analysis():
     if current_page and "analysis" in st.session_state:
         st.session_state["analysis_cache"][current_page] = ""
 
+def obtener_icono(nombre):
+    iconos = {
+        "Carga y Configuración": "fa-solid fa-upload",
+        "Evaluación Inicial": "fa-solid fa-magnifying-glass-chart",
+        "Análisis Profundo": "fa-solid fa-microscope",
+        "Desarrollo de la Propuesta": "fa-solid fa-file-pen",
+        "Revisión y Aprobación": "fa-solid fa-circle-check",
+        "Cargar RFP": "fa-solid fa-file-arrow-up",
+        "Configuración General": "fa-solid fa-gear",
+        "Mis Documentos": "fa-solid fa-folder-open",
+        "Análisis rápido": "fa-solid fa-bolt",
+        "Alineación estratégica": "fa-solid fa-bullseye",
+        "Ventaja Competitiva": "fa-solid fa-chart-line",
+        "Decisión de Participar": "fa-solid fa-handshake",
+        "Comprensión Detallada": "fa-solid fa-book-open",
+        "Identificación de 'dolores'": "fa-solid fa-heart-crack",
+        "Preguntas Aclaratorias": "fa-solid fa-circle-question",
+        "Evaluación de Recursos": "fa-solid fa-users-gear",
+        "Estructura del Índice": "fa-solid fa-list-ul",
+        "Resumen ejecutivo": "fa-solid fa-align-left",
+        "Solución Propuesta": "fa-solid fa-lightbulb",
+        "Beneficios y Valor Añadido": "fa-solid fa-gift",
+        "Experiencia y Credenciales": "fa-solid fa-user-tie",
+        "Equipo de Proyecto": "fa-solid fa-people-group",
+        "Cronograma y Presupuesto": "fa-solid fa-calendar-days",
+        "Cumplimiento de Requisitos": "fa-solid fa-check-double",
+        "Revisión Interna": "fa-solid fa-user-check",
+        "Aprobación Responsable": "fa-solid fa-shield-check"
+    }
+    return iconos.get(nombre, "fa-solid fa-circle-dot")
+
 # Layout principal
 if st.session_state["logged_in"]:
     col1, col2 = st.columns([1, 8])
@@ -98,10 +130,101 @@ if st.session_state["logged_in"]:
     with st.sidebar:
         st.sidebar.success(f"Usuario: {st.session_state['user']}")
         for category in menu_options.keys():
-            if st.button(category):
+            icon_html = f'<i class="{obtener_icono(category)} fa-fw"></i>'
+            if st.button(f"{icon_html} {category}", unsafe_allow_html=True, key=f"btn_cat_{category}"):
                 st.session_state["current_category"] = category
                 st.session_state["current_page"] = menu_options[category][0]
-        st.button("Cerrar Sesión", on_click=logout)
+
+    components.html("""
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-jQMnUe1tbvLIszv1qKmAg5qJOC9IxA1I3szTgEDUaz4BxTrjw5mwoq+TQQHzlRVmL0D5JApztEt9M2rFu/Un4g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+    /* Tipografía corporativa */
+    html, body, div, p, button {
+        font-family: 'Segoe UI', 'Roboto', sans-serif;
+        color: #1f2937; /* gris oscuro corporativo */
+    }
+
+    /* Fondo sobrio */
+    body {
+        background-color: #f4f6f8;
+    }
+
+    /* Botones del menú lateral */
+    section[data-testid="stSidebar"] button {
+        background-color: transparent !important;
+        color: #374151 !important;
+        font-weight: 500;
+        border: none;
+        border-left: 5px solid transparent;
+        transition: all 0.3s ease-in-out;
+        text-align: left;
+        padding-left: 15px;
+        margin-bottom: 5px;
+    }
+
+    section[data-testid="stSidebar"] button:hover {
+        background-color: #e5e7eb !important;
+        border-left: 5px solid #0ea5e9;
+        color: #0ea5e9 !important;
+        transform: translateX(3px);
+    }
+
+    /* Categoría activa */
+    section[data-testid="stSidebar"] button:focus:not(:active) {
+        background-color: #e0f2fe !important;
+        color: #0284c7 !important;
+        border-left: 5px solid #0284c7;
+    }
+
+    /* Subcategorías */
+    button[kind="secondary"] {
+        background-color: #ffffff;
+        color: #1f2937;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    button[kind="secondary"]:hover {
+        background-color: #f1f5f9;
+        color: #0f172a;
+        border-color: #0ea5e9;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    /* Animaciones suaves para cambio de sección */
+    h1, h2, h3, .stMarkdown {
+        animation: fadeSlideIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    }
+
+    /* Toast de bienvenida */
+    [data-testid="stToast"] {
+        font-weight: 600;
+        background-color: #f0f9ff !important;
+        color: #0369a1 !important;
+    }
+
+    /* Íconos SVG */
+    .fa {
+        margin-right: 8px;
+    }
+    </style>
+    """, height=0)
 
     # CSS para uniformizar el tamaño de los botones del submenú y el botón de descarga
     st.markdown("""
@@ -131,7 +254,9 @@ if st.session_state["logged_in"]:
     col1, col2, col3, col4 = st.columns(4)
     for i, subcategory in enumerate(sub_categories):
         col = [col1, col2, col3, col4][i % 4]
-        if col.button(subcategory, key=subcategory):
+        icon = obtener_icono(subcategory)
+        btn_html = f'<i class="{icon} fa-fw"></i> {subcategory}'
+        if col.button(btn_html, key=subcategory, use_container_width=True, help=subcategory, unsafe_allow_html=True):
             st.session_state["current_page"] = subcategory
 
     # Resaltar la página actual
