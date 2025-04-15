@@ -46,6 +46,8 @@ if "respuesta_guardada" not in st.session_state:
     st.session_state["respuesta_guardada"] = False
 if "show_welcome_message" not in st.session_state:
     st.session_state["show_welcome_message"] = True
+if "follow_up_steps" not in st.session_state:
+    st.session_state["follow_up_steps"] = {}
 
 # Función para cerrar sesión
 def logout():
