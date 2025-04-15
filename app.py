@@ -113,8 +113,14 @@ if st.session_state["logged_in"]:
             font-size: 16px;
             background-color: var(--primary-color);
             color: var(--text-color);
-            border: none;
+            border: 1px solid var(--secondary-background-color);
             border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .stButton button:hover, .stDownloadButton button:hover {
+            filter: brightness(0.95);
+            border-color: var(--text-color);
         }
         </style>
     """, unsafe_allow_html=True)
