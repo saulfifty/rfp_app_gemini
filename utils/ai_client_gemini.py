@@ -91,9 +91,10 @@ def generate_follow_up_steps_gemini(summary_text, category):
 
 def clean_gemini_response(text):
 
+    if isinstance(text, (tuple, list)):
+        text = text[0]
     parser = MarkdownParser()
-    cleaned_text = parser.parse(text)
-    return cleaned_text.strip()
+    return parser.parse(text).strip()
 
 def get_ai_summary_and_steps_gemini(rfp_text, category="Análisis Rápido"):
     prompt = "Como experto en análisis de RFP, proporciona un resumen completo y profesional del siguiente documento. Resume los objetivos principales, el alcance y los requisitos clave. Luego, enumera los pasos sugeridos para abordar cada punto importante."

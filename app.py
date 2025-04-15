@@ -232,8 +232,9 @@ if st.session_state["logged_in"]:
 
                 with st.spinner("⏳ Generando respuesta con IA..."):
 
-                    summary = function_mapping[current_page](st.session_state["rfp_text"])
-                    st.session_state["analysis_cache"][current_page] = summary
+                    analysis, steps = function_mapping[current_page](st.session_state["rfp_text"])
+                    st.session_state["analysis_cache"][current_page] = analysis
+                    st.session_state["follow_up_steps"][current_page] = steps
                     st.session_state["show_steps_button"] = True
 
         # Mostrar análisis si existe para la categoría actual
