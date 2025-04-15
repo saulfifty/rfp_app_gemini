@@ -2,7 +2,7 @@ import sqlite3
 import hashlib
 import re
 
-db_file = 'rfp.db'
+db_file = 'rfp_data.db'
 
 # Conectar a la base de datos (se creará si no existe)
 conn = sqlite3.connect(db_file)
@@ -63,7 +63,7 @@ conn.close()
 print("Base de datos y tablas creadas correctamente.")
 
 def get_connection():
-    return sqlite3.connect("rfp.db", check_same_thread=False)
+    return sqlite3.connect("rfp_data.db", check_same_thread=False)
 
 def registrar_usuario(nombre_usuario, email, contrasena):
     conn = get_connection()
