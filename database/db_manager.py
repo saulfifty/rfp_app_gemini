@@ -4,64 +4,6 @@ import re
 
 db_file = 'rfp.db'
 
-# Conectar a la base de datos (se creará si no existe)
-conn = sqlite3.connect(db_file)
-cursor = conn.cursor()
-
-# Crear las tablas si no existen
-cursor.execute('''CREATE TABLE IF NOT EXISTS usuarios (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    contrasena TEXT NOT NULL
-);''')
-
-cursor.execute('''CREATE TABLE IF NOT EXISTS rfps (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    usuario_id INTEGER,
-    nombre_archivo TEXT,
-    contenido TEXT,
-    fecha_subida TEXT,
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
-);''')
-
-cursor.execute('''CREATE TABLE IF NOT EXISTS categorias (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre TEXT UNIQUE NOT NULL
-);''')
-
-cursor.execute('''CREATE TABLE IF NOT EXISTS subcategorias (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    categoria_id INTEGER,
-    nombre TEXT NOT NULL,
-    FOREIGN KEY (categoria_id) REFERENCES categorias(id) ON DELETE CASCADE
-);''')
-
-cursor.execute('''CREATE TABLE IF NOT EXISTS respuestas_ia (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    rfp_id INTEGER,
-    subcategoria_id INTEGER,
-    respuesta TEXT,
-    fecha_generacion TEXT,
-    FOREIGN KEY (rfp_id) REFERENCES rfps(id) ON DELETE CASCADE,
-    FOREIGN KEY (subcategoria_id) REFERENCES subcategorias(id) ON DELETE CASCADE
-);''')
-
-cursor.execute('''CREATE TABLE IF NOT EXISTS documentos_usuario (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    rfp_id INTEGER,
-    titulo TEXT,
-    contenido TEXT,
-    fecha_creacion TEXT,
-    FOREIGN KEY (rfp_id) REFERENCES rfps(id) ON DELETE CASCADE
-);''')
-
-# Guardar los cambios y cerrar la conexión
-conn.commit()
-conn.close()
-
-print("Base de datos y tablas creadas correctamente.")
-
 def get_connection():
     return sqlite3.connect("rfp.db", check_same_thread=False)
 
@@ -229,3 +171,59 @@ def obtener_user_id_por_email(email):
 def es_correo_valido(email):
     regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
     return re.match(regex, email)
+
+def inicializar_base_de_datos():
+    conn = sqlite3.connect(db_file)
+    cursor = conn.cursor()
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS usuarios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        contrasena TEXT NOT NULL
+    );''')
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS rfps (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        usuario_id INTEGER,
+        nombre_archivo TEXT,
+        contenido TEXT,
+        fecha_subida TEXT,
+        FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+    );''')
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS categorias (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT UNIQUE NOT NULL
+    );''')
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS subcategorias (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        categoria_id INTEGER,
+        nombre TEXT NOT NULL,
+        FOREIGN KEY (categoria_id) REFERENCES categorias(id) ON DELETE CASCADE
+    );''')
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS respuestas_ia (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        rfp_id INTEGER,
+        subcategoria_id INTEGER,
+        respuesta TEXT,
+        fecha_generacion TEXT,
+        FOREIGN KEY (rfp_id) REFERENCES rfps(id) ON DELETE CASCADE,
+        FOREIGN KEY (subcategoria_id) REFERENCES subcategorias(id) ON DELETE CASCADE
+    );''')
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS documentos_usuario (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        rfp_id INTEGER,
+        titulo TEXT,
+        contenido TEXT,
+        fecha_creacion TEXT,
+        FOREIGN KEY (rfp_id) REFERENCES rfps(id) ON DELETE CASCADE
+    );''')
+
+    conn.commit()
+    conn.close()
+
+    print("DB inicializada")

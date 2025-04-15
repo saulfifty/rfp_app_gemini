@@ -5,7 +5,7 @@ import streamlit.components.v1 as components
 from datetime import datetime
 from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
-from database.db_manager import (get_connection, registrar_usuario, verificar_credenciales, 
+from database.db_manager import (inicializar_base_de_datos, get_connection, registrar_usuario, verificar_credenciales, 
     guardar_rfp, guardar_respuesta_ia, guardar_documento_usuario, obtener_documento_usuario, 
     actualizar_documento_usuario, obtener_user_id_por_email, es_correo_valido, obtener_todos_documentos_por_usuario)
 from utils.ai_client_gemini import (
@@ -18,7 +18,7 @@ from utils.ai_client_gemini import (
 )
 
 # Inicializar la base de datos
-get_connection()
+inicializar_base_de_datos()
 
 # Definir las categorías y subcategorías del menú
 menu_options = {
