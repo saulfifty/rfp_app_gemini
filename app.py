@@ -60,8 +60,7 @@ def logout():
     st.session_state["show_welcome_message"] = True
 
 def clean_text(text):
-    text = re.sub(r'#* ', '', text)
-    return text.strip()
+    return ''.join(c if ord(c) < 256 else '?' for c in text)
 
 def generate_pdf(content):
     pdf = FPDF()
