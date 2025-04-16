@@ -209,7 +209,7 @@ if st.session_state["logged_in"]:
 
             nombre_busqueda = st.text_input("Buscar por nombre de archivo")
             cliente_busqueda = st.text_input("Buscar por cliente")
-            fecha_inicio = st.date_input("Fecha de inicio", value=datetime(2000, 1, 1).date())
+            fecha_inicio = st.date_input("Fecha de inicio", datetime.today())
 
             rfps = obtener_todas_rfps_por_usuario(user_id)
 
