@@ -2,6 +2,7 @@ import streamlit as st
 import time
 import io
 import os
+import re
 from datetime import datetime
 from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
