@@ -228,8 +228,7 @@ if st.session_state["logged_in"]:
 
             if (
                 (not nombre_busqueda or nombre_busqueda.lower() in nombre_archivo.lower()) and
-                (not cliente_busqueda or cliente_busqueda.lower() in cliente.lower()) and
-                (fecha_obj and fecha_inicio <= fecha_obj <= fecha_fin)
+                (not cliente_busqueda or cliente_busqueda.lower() in cliente.lower())
             ):
                 rfps_filtradas.append(rfp)
 
