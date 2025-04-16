@@ -99,109 +99,11 @@ if st.session_state["logged_in"]:
     with st.sidebar:
         st.sidebar.success(f"Usuario: {st.session_state['user']}")
 
-        for category in menu_options:
-            is_active = st.session_state["current_category"] == category
-            button_label = f"▶ {category}" if is_active else category
-            if st.button(button_label, key=f"btn_{category}"):
+        for category in menu_options.keys():
+            if st.button(category):
                 st.session_state["current_category"] = category
                 st.session_state["current_page"] = menu_options[category][0]
-
-    components.html("""
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-jQMnUe1tbvLIszv1qKmAg5qJOC9IxA1I3szTgEDUaz4BxTrjw5mwoq+TQQHzlRVmL0D5JApztEt9M2rFu/Un4g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <style>
-    /* Tipografía corporativa */
-    html, body, div, p, button {
-        font-family: 'Segoe UI', 'Roboto', sans-serif;
-        color: #1f2937; /* gris oscuro corporativo */
-    }
-
-    /* Fondo sobrio */
-    body {
-        background-color: #f4f6f8;
-    }
-
-    /* Botones del menú lateral */
-    section[data-testid="stSidebar"] button {
-        background-color: transparent !important;
-        color: #374151 !important;
-        font-weight: 500;
-        border: none;
-        border-left: 5px solid transparent;
-        transition: all 0.3s ease-in-out;
-        text-align: left;
-        padding-left: 15px;
-        margin-bottom: 5px;
-    }
-
-    section[data-testid="stSidebar"] button:hover {
-        background-color: #e5e7eb !important;
-        border-left: 5px solid #0ea5e9;
-        color: #0ea5e9 !important;
-        transform: translateX(3px);
-    }
-
-    /* Categoría activa */
-    section[data-testid="stSidebar"] button:focus:not(:active) {
-        background-color: #e0f2fe !important;
-        color: #0284c7 !important;
-        border-left: 5px solid #0284c7;
-    }
-
-    /* Subcategorías */
-    button[kind="secondary"] {
-        background-color: #ffffff;
-        color: #1f2937;
-        border: 1px solid #d1d5db;
-        border-radius: 10px;
-        font-size: 14px;
-        transition: all 0.2s ease-in-out;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
-
-    button[kind="secondary"]:hover {
-        background-color: #f1f5f9;
-        color: #0f172a;
-        border-color: #0ea5e9;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-
-    /* Animaciones suaves para cambio de sección */
-    h1, h2, h3, .stMarkdown {
-        animation: fadeSlideIn 0.6s ease-in-out;
-    }
-
-    @keyframes fadeSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    }
-
-    /* Toast de bienvenida */
-    [data-testid="stToast"] {
-        font-weight: 600;
-        background-color: #f0f9ff !important;
-        color: #0369a1 !important;
-    }
-
-    /* Íconos SVG */
-    .fa {
-        margin-right: 8px;
-    }
-                    
-    .active-category {
-        background-color: #e0f2fe !important;
-        color: #0284c7 !important;
-        border-left: 5px solid #0284c7 !important;
-    }
-    </style>
-    """, height=0)
+        st.button("Cerrar Sesión", on_click=logout)
 
     # CSS para uniformizar el tamaño de los botones del submenú y el botón de descarga
     st.markdown("""
