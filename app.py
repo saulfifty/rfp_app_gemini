@@ -59,7 +59,8 @@ def logout():
     st.session_state["show_welcome_message"] = True
 
 def clean_text(text):
-    return ''.join(c if ord(c) < 256 else '?' for c in text)
+    text = re.sub(r'#* ', '', text)
+    return text.strip()
 
 def generate_pdf(content):
     pdf = FPDF()
@@ -69,12 +70,19 @@ def generate_pdf(content):
 
     if os.path.exists(logo_path):
         try:
-            pdf.image(logo_path, x=10, y=8, w=40)
-            pdf.ln(25)  # Espacio después del logo
+            logo_width = 50
+            page_width = pdf.w
+            x_position = (page_width - logo_width) / 2
+            pdf.image(logo_path, x=x_position, y=10, w=logo_width)
+            pdf.ln(50)
         except RuntimeError as e:
             st.error(f"⚠️ Error al insertar el logo en el PDF: {e}")
     else:
         st.warning(f"⚠️ Logo no encontrado en: {logo_path}")
+
+    pdf.set_font("Arial", 'B', size=16)
+    pdf.cell(0, 10, "Análisis Automático de RFP", ln=True, align="C")
+    pdf.ln(10)
 
     pdf.set_font("Arial", size=12)
     content = clean_text(content)
