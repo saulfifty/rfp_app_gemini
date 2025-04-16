@@ -157,8 +157,8 @@ if st.session_state["logged_in"]:
             else:
                 st.error("Error al almacenar la RFP.")
 
-    elif st.session_state["current_page"] == "Mis Documentos":
-        st.subheader("📁 Mis Documentos")
+    elif st.session_state["current_page"] == "Mis RFPs":
+        st.subheader("📁 Mis RFPs")
 
         user_id = obtener_user_id_por_email(st.session_state["user"])
 
