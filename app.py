@@ -64,12 +64,15 @@ def clean_text(text):
 def generate_pdf(content):
     pdf = FPDF()
     pdf.add_page()
-    
+
     logo_path = "BID_AI_Logotype_Light.jpeg"
-    
+
     if os.path.exists(logo_path):
-        pdf.image(logo_path, x=10, y=8, w=40)
-        pdf.ln(25)
+        try:
+            pdf.image(logo_path, x=10, y=8, w=40)
+            pdf.ln(25)  # Espacio después del logo
+        except RuntimeError as e:
+            print(f"Error al insertar el logo en el PDF: {e}")
     else:
         print("Logo no encontrado en:", logo_path)
 
