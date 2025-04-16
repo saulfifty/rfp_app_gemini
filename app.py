@@ -1,6 +1,7 @@
 import streamlit as st
 import time
 import io
+import os
 from datetime import datetime
 from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
@@ -63,8 +64,16 @@ def clean_text(text):
 def generate_pdf(content):
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
+    
+    logo_path = "BID_AI_Logotype_Light.jpeg"
+    
+    if os.path.exists(logo_path):
+        pdf.image(logo_path, x=10, y=8, w=40)
+        pdf.ln(25)
+    else:
+        print("Logo no encontrado en:", logo_path)
 
+    pdf.set_font("Arial", size=12)
     content = clean_text(content)
     pdf.multi_cell(0, 10, content)
 
