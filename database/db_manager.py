@@ -29,14 +29,14 @@ def verificar_credenciales(email, contrasena):
     conn.close()
     return user is not None
 
-def guardar_rfp(usuario_id, nombre_archivo, contenido):
+def guardar_rfp(usuario_id, nombre_archivo, contenido, cliente):
     try:
         from datetime import datetime
         conn = get_connection()
         cursor = conn.cursor()
         fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        cursor.execute("INSERT INTO rfps (usuario_id, nombre_archivo, contenido, fecha_subida) VALUES (?, ?, ?, ?)",
-                    (usuario_id, nombre_archivo, contenido, fecha))
+        cursor.execute("INSERT INTO rfps (usuario_id, cliente, nombre_archivo, contenido, fecha_subida) VALUES (?, ?, ?, ?, ?)",
+                    (usuario_id, cliente, nombre_archivo, contenido, fecha))
         conn.commit()
         rfp_id = cursor.lastrowid
         conn.close()
@@ -186,6 +186,7 @@ def inicializar_base_de_datos():
     cursor.execute('''CREATE TABLE IF NOT EXISTS rfps (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         usuario_id INTEGER,
+        cliente TEXT,
         nombre_archivo TEXT,
         contenido TEXT,
         fecha_subida TEXT,

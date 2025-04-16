@@ -2,7 +2,6 @@ import streamlit as st
 import time
 import io
 import os
-import re
 from datetime import datetime
 from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
@@ -161,21 +160,42 @@ if st.session_state["logged_in"]:
     # Contenido de la página actual
     if st.session_state["current_page"] == "Cargar RFP":
         st.subheader("Subir y Analizar RFP")
-        uploaded_file = st.file_uploader("Sube un archivo RFP", type="pdf")
         
-        if uploaded_file is not None:
-            with open("uploaded.pdf", "wb") as f:
-                f.write(uploaded_file.getbuffer())
-            text = extract_text_from_pdf("uploaded.pdf")
-            st.session_state["rfp_text"] = text
-            st.text_area("Contenido del RFP", text, height=200)
+        client_name = st.text_input("Nombre del cliente")
+
+        uploaded_files = st.file_uploader(
+            "Sube uno o varios archivos PDF de la RFP",
+            type="pdf",
+            accept_multiple_files=True
+        )
+
+        if uploaded_files and client_name:
+            full_text = ""
+            file_names = []
+
+            for uploaded_file in uploaded_files:
+                file_path = f"temp_{uploaded_file.name}"
+                with open(file_path, "wb") as f:
+                    f.write(uploaded_file.getbuffer())
+                
+                extracted_text = extract_text_from_pdf(file_path)
+                full_text += f"\n\n--- Contenido de {uploaded_file.name} ---\n\n{extracted_text}"
+                file_names.append(uploaded_file.name)
+
+            st.text_area("Contenido combinado de los RFPs", full_text.strip(), height=300)
+
             user_id = obtener_user_id_por_email(st.session_state["user"])
-            rfp_id = guardar_rfp(user_id, uploaded_file.name, text)
+            nombre_completo_archivos = ", ".join(file_names)
+
+            rfp_id = guardar_rfp(user_id, nombre_completo_archivos, full_text.strip(), client_name)
+
             if rfp_id:
                 st.session_state["rfp_id"] = rfp_id
-                st.success("RFP almacenada correctamente.")
+                st.success("RFPs almacenadas correctamente.")
             else:
-                st.error("Error al almacenar la RFP.")
+                st.error("Error al almacenar las RFPs.")
+        elif uploaded_files and not client_name:
+            st.warning("Por favor, introduce el nombre del cliente antes de continuar.")
 
     elif st.session_state["current_page"] == "Mis RFPs":
         st.subheader("📁 Mis RFPs")
