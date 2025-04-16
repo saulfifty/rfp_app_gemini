@@ -129,32 +129,14 @@ if st.session_state["logged_in"]:
     # Menú lateral
     with st.sidebar:
         st.sidebar.success(f"Usuario: {st.session_state['user']}")
-        
+
         for category in menu_options:
             icon = obtener_icono(category)
-            is_active_cat = st.session_state["current_category"] == category
-            btn_style = "background-color: #e0f2fe; color: #0284c7; border-left: 5px solid #0284c7;" if is_active_cat else ""
-            if st.markdown(
-                f"""
-                <div style="margin-bottom:10px;">
-                    <button style="width:100%; text-align:left; padding:10px 15px; font-size:16px; border:none; border-left:5px solid transparent; background:none; transition:0.3s; {btn_style}"
-                            onclick="window.location.reload(); document.getElementById('{category}').click();">
-                        <i class="{icon}"></i> {category}
-                    </button>
-                </div>
-                <script>
-                    const btn = document.createElement("button");
-                    btn.id = "{category}";
-                    btn.style.display = "none";
-                    btn.onclick = () => {{
-                        window.parent.postMessage({{type: "streamlit:setComponentValue", value: "{category}"}}, "*");
-                    }};
-                    document.body.appendChild(btn);
-                </script>
-                """,
-                unsafe_allow_html=True
-            ):
+            is_active = st.session_state["current_category"] == category
+            btn_label = f"{category}"
+            if st.button(f"{icon} {btn_label}", key=f"btn_{category}"):
                 st.session_state["current_category"] = category
+                st.session_state["current_page"] = menu_options[category][0]
 
     components.html("""
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-jQMnUe1tbvLIszv1qKmAg5qJOC9IxA1I3szTgEDUaz4BxTrjw5mwoq+TQQHzlRVmL0D5JApztEt9M2rFu/Un4g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
