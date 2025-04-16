@@ -144,7 +144,7 @@ if st.session_state["logged_in"]:
                 unsafe_allow_html=True
             )
             # Actualizar categoría con un botón invisible
-            if st.button(category, key=f"btn_{category}"):
+            if st.button(f"{category}", key=f"btn_{category}"):
                 st.session_state["current_category"] = category
                 st.session_state["current_page"] = menu_options[category][0]
 
