@@ -1,7 +1,6 @@
 import streamlit as st
 import time
 import io
-import streamlit.components.v1 as components
 from datetime import datetime
 from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
@@ -22,7 +21,7 @@ inicializar_base_de_datos()
 
 # Definir las categorías y subcategorías del menú
 menu_options = {
-    "Carga y Configuración": ["Cargar RFP", "Configuración General", "Mis Documentos"],
+    "Carga y Configuración": ["Cargar RFP", "Configuración General", "Mis RFPs"],
     "Evaluación Inicial": ["Análisis rápido", "Alineación estratégica", "Ventaja Competitiva", "Decisión de Participar"],
     "Análisis Profundo": ["Comprensión Detallada", "Identificación de 'dolores'", "Preguntas Aclaratorias", "Evaluación de Recursos"],
     "Desarrollo de la Propuesta": ["Estructura del Índice", "Resumen ejecutivo", "Solución Propuesta", "Beneficios y Valor Añadido", "Experiencia y Credenciales", "Equipo de Proyecto", "Cronograma y Presupuesto", "Cumplimiento de Requisitos"],
@@ -133,10 +132,8 @@ if st.session_state["logged_in"]:
     col1, col2, col3, col4 = st.columns(4)
     for i, subcategory in enumerate(sub_categories):
         col = [col1, col2, col3, col4][i % 4]
-        with col:
-            st.markdown('<div style="margin-bottom: 10px;"></div>', unsafe_allow_html=True)
-            if st.button(subcategory, key=subcategory, use_container_width=True, help=subcategory):
-                st.session_state["current_page"] = subcategory
+        if col.button(subcategory, key=subcategory):
+            st.session_state["current_page"] = subcategory
 
     # Resaltar la página actual
     st.markdown(f"**Página actual:** {st.session_state['current_page']}")
