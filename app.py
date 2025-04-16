@@ -102,19 +102,31 @@ if st.session_state["logged_in"]:
         for category in menu_options:
             is_active = st.session_state["current_category"] == category
 
+            btn_class = "active-category" if is_active else ""
+
+            # Renderizamos un botón personalizado con HTML que al hacer clic activa el botón oculto de Streamlit
             st.markdown(
                 f"""
-                <button onclick="window.location.reload(false)" 
-                        style="background-color: transparent; border: none; width: 100%; text-align: left; padding: 8px 0; color: {'#0284c7' if is_active else '#374151'}; font-weight: 600;">
-                    {category}
-                </button>
+                <form action="" method="post">
+                    <button type="submit" name="category" value="{category}" class="{btn_class}" style="background-color: transparent; border: none; width: 100%; text-align: left; padding: 8px 0; font-weight: 600;">
+                        {category}
+                    </button>
+                </form>
                 """,
                 unsafe_allow_html=True
             )
-            # Actualizar categoría con un botón invisible
-            if st.button(f"{category}", key=f"btn_{category}"):
+
+            # Captura de la selección
+            if st.session_state.get("selected_category") != category and st.session_state.get("category") == category:
                 st.session_state["current_category"] = category
                 st.session_state["current_page"] = menu_options[category][0]
+                st.session_state["category"] = None  # Reset para no activar dos veces
+
+        # Capturar el valor de selección con st.form workaround
+        category_selected = st.experimental_get_query_params().get("category", [None])[0]
+        if category_selected:
+            st.session_state["current_category"] = category_selected
+            st.session_state["current_page"] = menu_options[category_selected][0]
 
     components.html("""
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-jQMnUe1tbvLIszv1qKmAg5qJOC9IxA1I3szTgEDUaz4BxTrjw5mwoq+TQQHzlRVmL0D5JApztEt9M2rFu/Un4g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
