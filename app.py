@@ -5,8 +5,8 @@ import os
 from datetime import datetime
 from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
-from database.db_manager import (inicializar_base_de_datos, get_connection, registrar_usuario, verificar_credenciales, 
-    guardar_rfp, guardar_respuesta_ia, guardar_documento_usuario, obtener_documento_usuario, 
+from database.db_manager import (inicializar_base_de_datos, registrar_usuario, verificar_credenciales, 
+    guardar_rfp, guardar_respuesta_ia, guardar_documento_usuario, obtener_documento_usuario, obtener_todas_rfps_por_usuario,
     actualizar_documento_usuario, obtener_user_id_por_email, es_correo_valido, obtener_todos_documentos_por_usuario)
 from utils.ai_client_gemini import (
     get_ai_summary_and_steps_gemini, get_ai_alignment_strategy_gemini, get_ai_competitive_advantage_gemini,
@@ -183,6 +183,7 @@ if st.session_state["logged_in"]:
                 file_names.append(uploaded_file.name)
 
             st.text_area("Contenido combinado de los RFPs", full_text.strip(), height=300)
+            st.session_state["rfp_text"] = full_text.strip()
 
             user_id = obtener_user_id_por_email(st.session_state["user"])
             nombre_completo_archivos = ", ".join(file_names)
@@ -203,49 +204,45 @@ if st.session_state["logged_in"]:
         user_id = obtener_user_id_por_email(st.session_state["user"])
 
         if user_id:
-            # Crear campos de búsqueda para el título y la fecha
-            titulo_busqueda = st.text_input("Buscar por título de RFP", "")
-            fecha_inicio = st.date_input("Fecha de inicio", min_value=datetime(2000, 1, 1).date())
-            fecha_fin = st.date_input("Fecha de fin", max_value=datetime.today().date())
 
-            # Obtener todos los documentos del usuario
-            documentos = obtener_todos_documentos_por_usuario(user_id)
+            st.markdown("### Filtros de búsqueda")
 
-            if documentos:
-                # Filtrar documentos según los criterios de búsqueda
-                documentos_filtrados = []
-                for doc in documentos:
-                    doc_id, rfp_id, titulo, contenido, fecha_creacion = doc
+            nombre_busqueda = st.text_input("Buscar por nombre de archivo")
+            cliente_busqueda = st.text_input("Buscar por cliente")
+            fecha_inicio = st.date_input("Fecha de inicio", value=datetime(2000, 1, 1).date())
 
-                    # Convertir la fecha_creacion a un objeto de fecha para compararla
-                    fecha_creacion_obj = datetime.strptime(fecha_creacion, "%Y-%m-%d %H:%M:%S").date()
+            rfps = obtener_todas_rfps_por_usuario(user_id)
 
-                    # Verificar si el título y la fecha cumplen con los filtros
-                    if (titulo_busqueda.lower() in titulo.lower() and 
-                        fecha_inicio <= fecha_creacion_obj <= fecha_fin):
-                        documentos_filtrados.append(doc)
+            rfps_filtradas = []
+        for rfp in rfps:
+            rfp_id, usuario_id, cliente, nombre_archivo, contenido, fecha_subida = rfp
 
-                # Mostrar los documentos filtrados
-                if documentos_filtrados:
-                    for doc in documentos_filtrados:
-                        doc_id, rfp_id, titulo, contenido, fecha_creacion = doc
+            # Convertir fecha_subida a objeto datetime
+            try:
+                fecha_obj = datetime.strptime(fecha_subida, "%Y-%m-%d %H:%M:%S").date()
+            except ValueError:
+                try:
+                    fecha_obj = datetime.strptime(fecha_subida, "%Y-%m-%d").date()
+                except ValueError:
+                    fecha_obj = None
 
-                        with st.expander(f"{titulo} (Creado el {fecha_creacion})"):
-                            nuevo_titulo = st.text_input(f"Título para doc ID {doc_id}", value=titulo, key=f"titulo_{doc_id}")
-                            nuevo_contenido = st.text_area(f"Contenido para doc ID {doc_id}", value=contenido, height=200, key=f"contenido_{doc_id}")
-                            if st.button("Actualizar", key=f"btn_actualizar_{doc_id}"):
-                                success = actualizar_documento_usuario(doc_id, nuevo_titulo, nuevo_contenido, user_id)
-                                if success:
-                                    st.success("Documento actualizado correctamente.")
-                                    st.rerun()
-                                else:
-                                    st.error("Hubo un error al actualizar el documento.")
-                else:
-                    st.info("No se encontraron documentos que coincidan con los filtros.")
-            else:
-                st.info("No tienes documentos almacenados aún.")
+            if (
+                (not nombre_busqueda or nombre_busqueda.lower() in nombre_archivo.lower()) and
+                (not cliente_busqueda or cliente_busqueda.lower() in cliente.lower()) and
+                (fecha_obj and fecha_inicio <= fecha_obj <= fecha_fin)
+            ):
+                rfps_filtradas.append(rfp)
+
+        if rfps_filtradas:
+            for rfp in rfps_filtradas:
+                rfp_id, usuario_id, cliente, nombre_archivo, contenido, fecha_subida = rfp
+                with st.expander(f"📄 {nombre_archivo} - Cliente: {cliente} - Subida: {fecha_subida}"):
+                    st.markdown(f"**Contenido:**")
+                    st.write(contenido)
         else:
-            st.error("No se pudo encontrar el usuario en la base de datos.")
+            st.info("No se encontraron RFPs que coincidan con los filtros.")
+    else:
+        st.error("No se pudo encontrar el usuario en la base de datos.")
 
     
     function_mapping = {

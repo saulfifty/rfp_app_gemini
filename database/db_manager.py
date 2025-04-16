@@ -105,6 +105,27 @@ def obtener_todos_documentos_por_usuario(usuario_id):
     except Exception as e:
         print("Error al obtener documentos del usuario:", e)
         return []
+    
+def obtener_todas_rfps_por_usuario(usuario_id):
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT id,
+                usuario_id,
+                cliente,
+                nombre_archivo,
+                contenido,
+                fecha_subida FROM rfps WHERE usuario_id = ?
+        ''', (usuario_id,))
+        rfps = cursor.fetchall()
+
+        conn.close()
+        return rfps
+    except Exception as e:
+        print("Error al obtener rfps del usuario:", e)
+        return []
 
 def obtener_documento_usuario(usuario_id, rfp_id):
     try:
