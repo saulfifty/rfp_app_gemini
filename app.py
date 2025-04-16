@@ -133,8 +133,18 @@ if st.session_state["logged_in"]:
         for category in menu_options:
             icon = obtener_icono(category)
             is_active = st.session_state["current_category"] == category
-            btn_label = f"{category}"
-            if st.button(f"{icon} {btn_label}", key=f"btn_{category}"):
+
+            st.markdown(
+                f"""
+                <button onclick="window.location.reload(false)" 
+                        style="background-color: transparent; border: none; width: 100%; text-align: left; padding: 8px 0; color: {'#0284c7' if is_active else '#374151'}; font-weight: 600;">
+                    <i class="{icon}" style="margin-right: 10px;"></i>{category}
+                </button>
+                """,
+                unsafe_allow_html=True
+            )
+            # Actualizar categoría con un botón invisible
+            if st.button(category, key=f"btn_{category}"):
                 st.session_state["current_category"] = category
                 st.session_state["current_page"] = menu_options[category][0]
 
