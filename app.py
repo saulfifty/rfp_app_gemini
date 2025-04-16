@@ -81,37 +81,6 @@ def reset_analysis():
     if current_page and "analysis" in st.session_state:
         st.session_state["analysis_cache"][current_page] = ""
 
-def obtener_icono(nombre):
-    iconos = {
-        "Carga y Configuración": "fa-solid fa-upload",
-        "Evaluación Inicial": "fa-solid fa-magnifying-glass-chart",
-        "Análisis Profundo": "fa-solid fa-microscope",
-        "Desarrollo de la Propuesta": "fa-solid fa-file-pen",
-        "Revisión y Aprobación": "fa-solid fa-circle-check",
-        "Cargar RFP": "fa-solid fa-file-arrow-up",
-        "Configuración General": "fa-solid fa-gear",
-        "Mis Documentos": "fa-solid fa-folder-open",
-        "Análisis rápido": "fa-solid fa-bolt",
-        "Alineación estratégica": "fa-solid fa-bullseye",
-        "Ventaja Competitiva": "fa-solid fa-chart-line",
-        "Decisión de Participar": "fa-solid fa-handshake",
-        "Comprensión Detallada": "fa-solid fa-book-open",
-        "Identificación de 'dolores'": "fa-solid fa-heart-crack",
-        "Preguntas Aclaratorias": "fa-solid fa-circle-question",
-        "Evaluación de Recursos": "fa-solid fa-users-gear",
-        "Estructura del Índice": "fa-solid fa-list-ul",
-        "Resumen ejecutivo": "fa-solid fa-align-left",
-        "Solución Propuesta": "fa-solid fa-lightbulb",
-        "Beneficios y Valor Añadido": "fa-solid fa-gift",
-        "Experiencia y Credenciales": "fa-solid fa-user-tie",
-        "Equipo de Proyecto": "fa-solid fa-people-group",
-        "Cronograma y Presupuesto": "fa-solid fa-calendar-days",
-        "Cumplimiento de Requisitos": "fa-solid fa-check-double",
-        "Revisión Interna": "fa-solid fa-user-check",
-        "Aprobación Responsable": "fa-solid fa-shield-check"
-    }
-    return iconos.get(nombre, "fa-solid fa-circle-dot")
-
 # Layout principal
 if st.session_state["logged_in"]:
     col1, col2 = st.columns([1, 8])
@@ -131,14 +100,13 @@ if st.session_state["logged_in"]:
         st.sidebar.success(f"Usuario: {st.session_state['user']}")
 
         for category in menu_options:
-            icon = obtener_icono(category)
             is_active = st.session_state["current_category"] == category
 
             st.markdown(
                 f"""
                 <button onclick="window.location.reload(false)" 
                         style="background-color: transparent; border: none; width: 100%; text-align: left; padding: 8px 0; color: {'#0284c7' if is_active else '#374151'}; font-weight: 600;">
-                    <i class="{icon}" style="margin-right: 10px;"></i>{category}
+                    {category}
                 </button>
                 """,
                 unsafe_allow_html=True
@@ -273,14 +241,8 @@ if st.session_state["logged_in"]:
     col1, col2, col3, col4 = st.columns(4)
     for i, subcategory in enumerate(sub_categories):
         col = [col1, col2, col3, col4][i % 4]
-        icon = obtener_icono(subcategory)
         with col:
-            st.markdown(
-                f'<div style="text-align:center; margin-bottom: 4px;">'
-                f'<i class="{icon} fa-2x" style="color:#4a4a4a;"></i>'
-                f'</div>',
-                unsafe_allow_html=True
-            )
+            st.markdown('<div style="margin-bottom: 10px;"></div>', unsafe_allow_html=True)
             if st.button(subcategory, key=subcategory, use_container_width=True, help=subcategory):
                 st.session_state["current_page"] = subcategory
 
