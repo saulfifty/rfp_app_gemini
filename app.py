@@ -72,9 +72,9 @@ def generate_pdf(content):
             pdf.image(logo_path, x=10, y=8, w=40)
             pdf.ln(25)  # Espacio después del logo
         except RuntimeError as e:
-            print(f"Error al insertar el logo en el PDF: {e}")
+            st.error(f"⚠️ Error al insertar el logo en el PDF: {e}")
     else:
-        print("Logo no encontrado en:", logo_path)
+        st.warning(f"⚠️ Logo no encontrado en: {logo_path}")
 
     pdf.set_font("Arial", size=12)
     content = clean_text(content)
