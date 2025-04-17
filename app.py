@@ -268,8 +268,6 @@ if st.session_state["logged_in"]:
         user_id = obtener_user_id_por_email(st.session_state["user"])
 
         if rfp_id and user_id:
-            # Subtítulo con botón para volver atrás
-            st.markdown("### 📁 Mis RFPs")
             if st.button("⬅️ Volver al listado"):
                 st.session_state["current_page"] = "Mis RFPs"
                 st.session_state.pop("selected_rfp_id", None)
@@ -321,11 +319,13 @@ if st.session_state["logged_in"]:
                 if cols[i].button(categoria, key=f"cat_{categoria}"):
                     st.session_state["categoria_seleccionada"] = categoria
                     subcats = categorias_con_docs[categoria]
-                    primera_sub = list(subcats.keys())[0]
+                    primera_sub = next((s for s, d in subcats.items() if d), None)
                     st.session_state["subcategoria_seleccionada"] = primera_sub
 
             # Obtener subcategorías de la categoría seleccionada
-            subcategorias = categorias_con_docs[st.session_state["categoria_seleccionada"]]
+            subcategorias = {
+                sub: docs for sub, docs in categorias_con_docs[st.session_state["categoria_seleccionada"]].items() if docs
+            }
 
             st.markdown("#### Subcategorías")
             cols_sub = st.columns(len(subcategorias))
