@@ -290,7 +290,7 @@ if st.session_state["logged_in"]:
             docs_por_categoria = {cat: {sub: [] for sub in subs} for cat, subs in estructura_rfp.items()}
 
             for doc in documentos:
-                _, titulo, contenido, _, nombre_categoria, nombre_subcategoria = doc
+                doc_id, titulo, contenido, fecha_creacion, nombre_categoria, nombre_subcategoria = doc
                 if nombre_categoria in docs_por_categoria and nombre_subcategoria in docs_por_categoria[nombre_categoria]:
                     docs_por_categoria[nombre_categoria][nombre_subcategoria].append((titulo, contenido))
 
@@ -338,10 +338,31 @@ if st.session_state["logged_in"]:
             docs = subcategorias[st.session_state["subcategoria_seleccionada"]]
             if docs:
                 st.markdown("### Documentos")
-                for titulo, contenido in docs:
-                    with st.container(border=True):
-                        st.markdown(f"**📄 {titulo}**", unsafe_allow_html=True)
-                        st.markdown(f"<div style='text-align:justify'>{contenido}</div>", unsafe_allow_html=True)
+                for doc in documentos:
+                    doc_id, titulo, contenido, fecha_creacion, nombre_categoria, nombre_subcategoria = doc
+
+                    if (
+                        nombre_categoria == st.session_state["categoria_seleccionada"]
+                        and nombre_subcategoria == st.session_state["subcategoria_seleccionada"]
+                    ):
+                        with st.container(border=True):
+                            st.markdown("##### ✏️ Editar Documento")
+
+                            nuevo_titulo = st.text_input("Título", value=titulo, key=f"titulo_{doc_id}")
+                            nuevo_contenido = st.text_area("Contenido", value=contenido, height=200, key=f"contenido_{doc_id}")
+
+                            col1, col2 = st.columns(2)
+                            with col1:
+                                if st.button("💾 Actualizar", key=f"actualizar_{doc_id}"):
+                                    actualizar_documento_usuario(doc_id, nuevo_titulo, nuevo_contenido, user_id)
+                                    st.success("Documento actualizado correctamente.")
+                                    st.rerun()
+                            with col2:
+                                if st.button("🗑️ Eliminar", key=f"eliminar_{doc_id}"):
+                                    eliminar_documento_usuario(doc_id, user_id)
+                                    st.success("Documento eliminado correctamente.")
+                                    st.rerun()
+
             else:
                 st.info("No hay documentos en esta subcategoría.")
 
