@@ -380,8 +380,10 @@ if st.session_state["logged_in"]:
                     rfp_id = st.session_state.get("rfp_id", None)
                     titulo = f"{current_page} generado con IA"
                     pasos_sugeridos = generate_follow_up_steps_gemini(st.session_state["rfp_text"], "Análisis")
+                    nombre_categoria = st.session_state["current_category"]
+                    nombre_subcategoria = st.session_state["current_page"]
                     
-                    if guardar_documento_usuario(rfp_id, titulo, resumen_editable):
+                    if guardar_documento_usuario(rfp_id, titulo, resumen_editable, nombre_categoria, nombre_subcategoria):
                         st.session_state["respuesta_guardada"] = True
                         st.session_state["analysis_cache"][current_page] = resumen_editable
                     else:
