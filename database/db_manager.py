@@ -253,9 +253,11 @@ def obtener_documentos_por_rfp_y_usuario(rfp_id, usuario_id):
             return []
 
         cursor.execute('''
-            SELECT id, titulo, contenido, fecha_creacion, categoria_id, subcategoria_id
-            FROM documentos_usuario
-            WHERE rfp_id = ?
+            SELECT d.id, d.titulo, d.contenido, d.fecha_creacion, c.nombre AS nombre_categoria, s.nombre AS nombre_subcategoria
+            FROM documentos_usuario d
+            LEFT JOIN categorias c ON d.categoria_id = c.id
+            LEFT JOIN subcategorias s ON d.subcategoria_id = s.id
+            WHERE d.rfp_id = ?
         ''', (rfp_id,))
         documentos = cursor.fetchall()
 

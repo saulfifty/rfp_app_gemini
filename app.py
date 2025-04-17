@@ -268,13 +268,6 @@ if st.session_state["logged_in"]:
         user_id = obtener_user_id_por_email(st.session_state["user"])
 
         if rfp_id and user_id:
-            if st.get_option("theme.base") == "dark":
-                st.image("BID_AI_Logotype_dark.png", use_container_width=True, width=100)
-                st.title("Análisis de RFPs con IA")
-            else:
-                st.image("BID_AI_Logotype_Light.jpeg", use_container_width=True, width=100)
-                st.title("Análisis de RFPs con IA")
-
             # Subtítulo con botón para volver atrás
             st.markdown("### 📁 Mis RFPs")
             if st.button("⬅️ Volver al listado"):
