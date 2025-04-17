@@ -294,6 +294,39 @@ if st.session_state["logged_in"]:
                 "Revisión y Aprobación": ["Revisión Interna", "Aprobación Responsable"]
             }
 
+            # Obtener lista de todas las subcategorías
+            subcategorias_totales = [sub for lista in estructura_rfp.values() for sub in lista]
+
+            # Dentro del bloque de Detalle RFP
+            if st.session_state["current_page"] in subcategorias_totales:
+                subcategoria = st.session_state["current_page"]
+                rfp_id = st.session_state.get("selected_rfp_id")
+                user_id = obtener_user_id_por_email(st.session_state["user"])
+
+                # Intentar obtener el documento actualizado desde la base de datos
+                documento = obtener_documento_por_subcategoria_y_rfp(rfp_id, subcategoria, user_id)
+
+                # Si el documento existe, sincroniza el analysis_cache
+                if documento:
+                    contenido_documento = documento[0]  # Asumimos que contiene solo un campo 'contenido'
+                    if st.session_state["analysis_cache"].get(subcategoria) != contenido_documento:
+                        st.session_state["analysis_cache"][subcategoria] = contenido_documento
+                else:
+                    # Si se ha eliminado el documento, borra del cache
+                    if subcategoria in st.session_state["analysis_cache"]:
+                        del st.session_state["analysis_cache"][subcategoria]
+
+                # Mostrar textarea solo si hay contenido en el análisis cache
+                if subcategoria in st.session_state["analysis_cache"]:
+                    resumen_editable = st.text_area(
+                        "Resumen Generado por IA",
+                        st.session_state["analysis_cache"][subcategoria],
+                        height=300
+                    )
+                else:
+                    st.info("No hay resumen generado para esta subcategoría.")
+
+
             # Estructura con contenido
             docs_por_categoria = {cat: {sub: [] for sub in subs} for cat, subs in estructura_rfp.items()}
 
