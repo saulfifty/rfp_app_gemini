@@ -304,7 +304,7 @@ if st.session_state["logged_in"]:
                 user_id = obtener_user_id_por_email(st.session_state["user"])
 
                 # Intentar obtener el documento actualizado desde la base de datos
-                documento = obtener_documento_por_subcategoria_y_rfp(rfp_id, subcategoria, user_id)
+                documento = obtener_documentos_por_rfp_y_usuario(rfp_id, user_id)
 
                 # Si el documento existe, sincroniza el analysis_cache
                 if documento:
