@@ -275,14 +275,12 @@ if st.session_state["logged_in"]:
                 st.session_state.pop("selected_rfp_id", None)
                 st.rerun()
 
-            # Obtener documentos de la RFP
             documentos = obtener_documentos_por_rfp_y_usuario(rfp_id, user_id)
 
             if not documentos:
                 st.warning("Esta RFP no tiene documentos asociados.")
                 st.stop()
 
-            # Estructura base
             estructura_rfp = {
                 "Evaluación Inicial": ["Análisis rápido", "Alineación estratégica", "Ventaja Competitiva", "Decisión de Participar"],
                 "Análisis Profundo": ["Comprensión Detallada", "Identificación de 'dolores'", "Preguntas Aclaratorias", "Evaluación de Recursos"],
@@ -298,7 +296,6 @@ if st.session_state["logged_in"]:
                 if nombre_categoria in docs_por_categoria and nombre_subcategoria in docs_por_categoria[nombre_categoria]:
                     docs_por_categoria[nombre_categoria][nombre_subcategoria].append((titulo, contenido))
 
-            # Filtrar categorías que tengan al menos una subcategoría con documentos
             categorias_con_docs = {
                 cat: subs for cat, subs in docs_por_categoria.items()
                 if any(sub_docs for sub_docs in subs.values())
