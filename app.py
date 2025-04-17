@@ -6,7 +6,7 @@ from datetime import datetime
 from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
 from database.db_manager import (inicializar_base_de_datos, registrar_usuario, verificar_credenciales, 
-    guardar_rfp, guardar_respuesta_ia, guardar_documento_usuario, obtener_documento_usuario, obtener_todas_rfps_por_usuario,
+    guardar_rfp, eliminar_documento_usuario, guardar_documento_usuario, obtener_documento_usuario, obtener_todas_rfps_por_usuario,
     actualizar_documento_usuario, obtener_user_id_por_email, es_correo_valido, obtener_todos_documentos_por_usuario)
 from utils.ai_client_gemini import (
     get_ai_summary_and_steps_gemini, get_ai_alignment_strategy_gemini, get_ai_competitive_advantage_gemini,
@@ -235,9 +235,10 @@ if st.session_state["logged_in"]:
         if rfps_filtradas:
             for rfp in rfps_filtradas:
                 rfp_id, usuario_id, cliente, nombre_archivo, contenido, fecha_subida = rfp
+
                 with st.expander(f"📄 {nombre_archivo} - Cliente: {cliente} - Subida: {fecha_subida}"):
-                    st.markdown(f"**Contenido:**")
-                    st.write(contenido)
+                    st.markdown("Haz clic para ver detalles y acciones disponibles.")
+                    
         else:
             st.info("No se encontraron RFPs que coincidan con los filtros.")
     else:

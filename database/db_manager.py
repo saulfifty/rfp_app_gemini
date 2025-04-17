@@ -45,34 +45,30 @@ def guardar_rfp(usuario_id, nombre_archivo, contenido, cliente):
         print("Error al guardar RFP:", e)
         return False
 
-def guardar_respuesta_ia(rfp_id, subcategoria_id, respuesta):
+def guardar_documento_usuario(rfp_id, titulo, contenido, nombre_categoria, nombre_subcategoria):
     try:
         from datetime import datetime
         conn = get_connection()
         cursor = conn.cursor()
         fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        cursor.execute('''INSERT INTO respuestas_ia (rfp_id, subcategoria_id, respuesta, fecha_generacion)
-                        VALUES (?, ?, ?, ?)''', (rfp_id, subcategoria_id, respuesta, fecha))
-        conn.commit()
-        conn.close()
-        return True
-    except Exception as e:
-        print("Error al guardar respuesta IA:", e)
-        return False
 
-def guardar_documento_usuario(rfp_id, titulo, contenido):
-    try:
-        from datetime import datetime
-        conn = get_connection()
-        cursor = conn.cursor()
-        fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        cursor.execute("INSERT INTO documentos_usuario (rfp_id, titulo, contenido, fecha_creacion) VALUES (?, ?, ?, ?)",
-                    (rfp_id, titulo, contenido, fecha))
+        cursor.execute("INSERT INTO categorias (rfp_id, nombre) VALUES (?, ?)", (rfp_id, nombre_categoria))
+        categoria_id = cursor.lastrowid
+
+        cursor.execute("INSERT INTO subcategorias (nombre, categoria_id) VALUES (?, ?)", (nombre_subcategoria, categoria_id))
+        subcategoria_id = cursor.lastrowid
+
+        cursor.execute("INSERT INTO documentos_usuario (rfp_id, titulo, contenido, fecha_creacion, categoria_id, subcategoria_id) VALUES (?, ?, ?, ?, ?, ?)",
+                    (rfp_id, titulo, contenido, fecha, categoria_id, subcategoria_id))
+        
         conn.commit()
         conn.close()
+
         return True
+    
     except Exception as e:
         print("Error al guardar documento:", e)
+
         return False
     
 def obtener_todos_documentos_por_usuario(usuario_id):
@@ -92,10 +88,17 @@ def obtener_todos_documentos_por_usuario(usuario_id):
         rfp_ids = [rfp[0] for rfp in rfp_ids]
 
         cursor.execute('''
-            SELECT documentos_usuario.id, documentos_usuario.rfp_id, 
-                   documentos_usuario.titulo, documentos_usuario.contenido, 
-                   documentos_usuario.fecha_creacion
+            SELECT 
+                documentos_usuario.id,
+                documentos_usuario.rfp_id,
+                documentos_usuario.titulo,
+                documentos_usuario.contenido,
+                documentos_usuario.fecha_creacion,
+                categorias.nombre AS categoria_nombre,
+                subcategorias.nombre AS subcategoria_nombre
             FROM documentos_usuario
+            LEFT JOIN categorias ON documentos_usuario.categoria_id = categorias.id
+            LEFT JOIN subcategorias ON documentos_usuario.subcategoria_id = subcategorias.id
             WHERE documentos_usuario.rfp_id IN ({})
         '''.format(','.join('?' * len(rfp_ids))), rfp_ids)
 
@@ -127,23 +130,31 @@ def obtener_todas_rfps_por_usuario(usuario_id):
         print("Error al obtener rfps del usuario:", e)
         return []
 
-def obtener_documento_usuario(usuario_id, rfp_id):
+def obtener_documento_usuario(usuario_id, documento_id):
     try:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute('''
-            SELECT documentos_usuario.rfp_id, documentos_usuario.titulo, 
-                   documentos_usuario.contenido, documentos_usuario.fecha_creacion
+            SELECT 
+                documentos_usuario.id,
+                documentos_usuario.rfp_id,
+                documentos_usuario.titulo,
+                documentos_usuario.contenido,
+                documentos_usuario.fecha_creacion,
+                categorias.nombre AS categoria_nombre,
+                subcategorias.nombre AS subcategoria_nombre
             FROM documentos_usuario
             JOIN rfps ON documentos_usuario.rfp_id = rfps.id
-            WHERE documentos_usuario.rfp_id = ? AND rfps.usuario_id = ?
-        ''', (rfp_id, usuario_id))
-        documentos = cursor.fetchall()
+            LEFT JOIN categorias ON documentos_usuario.categoria_id = categorias.id
+            LEFT JOIN subcategorias ON documentos_usuario.subcategoria_id = subcategorias.id
+            WHERE documentos_usuario.id = ? AND rfps.usuario_id = ?
+        ''', (documento_id, usuario_id))
+        documento = cursor.fetchone()
         conn.close()
-        return documentos
+        return documento
     except Exception as e:
-        print("Error al obtener documentos del usuario:", e)
-        return []
+        print("Error al obtener documento del usuario:", e)
+        return None
 
 def actualizar_documento_usuario(doc_id, nuevo_titulo, nuevo_contenido, usuario_id):
     try:
@@ -177,6 +188,52 @@ def actualizar_documento_usuario(doc_id, nuevo_titulo, nuevo_contenido, usuario_
         return True
     except Exception as e:
         print("Error al actualizar documento:", e)
+        return False
+    
+def eliminar_documento_usuario(doc_id, usuario_id):
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT documentos_usuario.categoria_id, documentos_usuario.subcategoria_id
+            FROM documentos_usuario
+            JOIN rfps ON documentos_usuario.rfp_id = rfps.id
+            WHERE documentos_usuario.id = ? AND rfps.usuario_id = ?
+        ''', (doc_id, usuario_id))
+        resultado = cursor.fetchone()
+
+        if resultado is None:
+            print("Documento no pertenece al usuario o no existe.")
+            conn.close()
+            return False
+
+        categoria_id, subcategoria_id = resultado
+
+        cursor.execute('DELETE FROM documentos_usuario WHERE id = ?', (doc_id,))
+
+        if subcategoria_id:
+            cursor.execute('''
+                SELECT COUNT(*) FROM documentos_usuario WHERE subcategoria_id = ?
+            ''', (subcategoria_id,))
+            count = cursor.fetchone()[0]
+            if count == 0:
+                cursor.execute('DELETE FROM subcategorias WHERE id = ?', (subcategoria_id,))
+
+        if categoria_id:
+            cursor.execute('''
+                SELECT COUNT(*) FROM documentos_usuario WHERE categoria_id = ?
+            ''', (categoria_id,))
+            count = cursor.fetchone()[0]
+            if count == 0:
+                cursor.execute('DELETE FROM categorias WHERE id = ?', (categoria_id,))
+
+        conn.commit()
+        conn.close()
+        return True
+
+    except Exception as e:
+        print("Error al eliminar documento:", e)
         return False
     
 def obtener_user_id_por_email(email):
@@ -216,7 +273,9 @@ def inicializar_base_de_datos():
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS categorias (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre TEXT UNIQUE NOT NULL
+        rfp_id INTEGER NOT NULL,
+        nombre TEXT NOT NULL,
+        FOREIGN KEY (rfp_id) REFERENCES rfps(id) ON DELETE CASCADE
     );''')
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS subcategorias (
@@ -226,23 +285,17 @@ def inicializar_base_de_datos():
         FOREIGN KEY (categoria_id) REFERENCES categorias(id) ON DELETE CASCADE
     );''')
 
-    cursor.execute('''CREATE TABLE IF NOT EXISTS respuestas_ia (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        rfp_id INTEGER,
-        subcategoria_id INTEGER,
-        respuesta TEXT,
-        fecha_generacion TEXT,
-        FOREIGN KEY (rfp_id) REFERENCES rfps(id) ON DELETE CASCADE,
-        FOREIGN KEY (subcategoria_id) REFERENCES subcategorias(id) ON DELETE CASCADE
-    );''')
-
     cursor.execute('''CREATE TABLE IF NOT EXISTS documentos_usuario (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         rfp_id INTEGER,
         titulo TEXT,
         contenido TEXT,
         fecha_creacion TEXT,
-        FOREIGN KEY (rfp_id) REFERENCES rfps(id) ON DELETE CASCADE
+        categoria_id INTEGER,
+        subcategoria_id INTEGER,
+        FOREIGN KEY (rfp_id) REFERENCES rfps(id) ON DELETE CASCADE,
+        FOREIGN KEY (categoria_id) REFERENCES categorias(id) ON DELETE SET NULL,
+        FOREIGN KEY (subcategoria_id) REFERENCES subcategorias(id) ON DELETE SET NULL
     );''')
 
     conn.commit()
