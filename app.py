@@ -305,18 +305,46 @@ if st.session_state["logged_in"]:
                 st.info("No hay contenido disponible en ninguna categoría.")
                 st.stop()
 
-            # Mostrar tabs por cada categoría con subcategorías como secciones
-            tabs = st.tabs(list(categorias_con_docs.keys()))
+            # Inicializar estado para categoría y subcategoría seleccionadas
+            if "categoria_seleccionada" not in st.session_state:
+                st.session_state["categoria_seleccionada"] = list(categorias_con_docs.keys())[0]
 
-            for tab, (categoria, subcats) in zip(tabs, categorias_con_docs.items()):
-                with tab:
-                    for subcat, docs in subcats.items():
-                        if docs:
-                            st.markdown(f"### 🗂️ {subcat}")
-                            for titulo, contenido in docs:
-                                with st.container(border=True):
-                                    st.markdown(f"**📄 {titulo}**")
-                                    st.write(contenido)
+            if "subcategoria_seleccionada" not in st.session_state:
+                primera_sub = list(categorias_con_docs[st.session_state["categoria_seleccionada"]].keys())[0]
+                st.session_state["subcategoria_seleccionada"] = primera_sub
+
+            # Mostrar pestañas de categorías como botones estilo horizontal
+            st.markdown("#### Categorías")
+            cols = st.columns(len(categorias_con_docs))
+            for i, categoria in enumerate(categorias_con_docs.keys()):
+                estilo = "font-weight:bold; color:#ffffff; background-color:#4b6cb7; border-radius:5px; padding:5px 10px;" if categoria == st.session_state["categoria_seleccionada"] else "color:#4b6cb7;"
+                if cols[i].button(categoria, key=f"cat_{categoria}"):
+                    st.session_state["categoria_seleccionada"] = categoria
+                    subcats = categorias_con_docs[categoria]
+                    primera_sub = list(subcats.keys())[0]
+                    st.session_state["subcategoria_seleccionada"] = primera_sub
+
+            # Obtener subcategorías de la categoría seleccionada
+            subcategorias = categorias_con_docs[st.session_state["categoria_seleccionada"]]
+
+            st.markdown("#### Subcategorías")
+            cols_sub = st.columns(len(subcategorias))
+            for i, subcat in enumerate(subcategorias.keys()):
+                estilo = "font-weight:bold; color:#ffffff; background-color:#4b6cb7; border-radius:5px; padding:5px 10px;" if subcat == st.session_state["subcategoria_seleccionada"] else "color:#4b6cb7;"
+                if cols_sub[i].button(subcat, key=f"subcat_{subcat}"):
+                    st.session_state["subcategoria_seleccionada"] = subcat
+
+            # Mostrar documentos de la subcategoría seleccionada
+            docs = subcategorias[st.session_state["subcategoria_seleccionada"]]
+            if docs:
+                st.markdown("### Documentos")
+                for titulo, contenido in docs:
+                    with st.container(border=True):
+                        st.markdown(f"**📄 {titulo}**", unsafe_allow_html=True)
+                        st.markdown(f"<div style='text-align:justify'>{contenido}</div>", unsafe_allow_html=True)
+            else:
+                st.info("No hay documentos en esta subcategoría.")
+
     
     function_mapping = {
         "Análisis rápido": get_ai_summary_and_steps_gemini,
