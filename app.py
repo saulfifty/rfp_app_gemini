@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
-from database.db_manager import (inicializar_base_de_datos, registrar_usuario, verificar_credenciales, 
+from database.db_manager import (inicializar_base_de_datos, registrar_usuario, verificar_credenciales, obtener_documentos_por_rfp_y_usuario,
     guardar_rfp, eliminar_documento_usuario, guardar_documento_usuario, obtener_documento_usuario, obtener_todas_rfps_por_usuario,
     actualizar_documento_usuario, obtener_user_id_por_email, es_correo_valido, obtener_todos_documentos_por_usuario)
 from utils.ai_client_gemini import (
@@ -207,9 +207,29 @@ if st.session_state["logged_in"]:
 
             st.markdown("### Filtros de búsqueda")
 
-            nombre_busqueda = st.text_input("Buscar por nombre de archivo")
-            cliente_busqueda = st.text_input("Buscar por cliente")
-            fecha_inicio = st.date_input("Fecha de inicio", datetime.today())
+            nombre_busqueda = st.text_input(
+                "Buscar por nombre de archivo",
+                value=st.session_state.get("filtro_nombre", "")
+            )
+            st.session_state["filtro_nombre"] = nombre_busqueda
+
+            cliente_busqueda = st.text_input(
+                "Buscar por cliente",
+                value=st.session_state.get("filtro_cliente", "")
+            )
+            st.session_state["filtro_cliente"] = cliente_busqueda
+
+            fecha_inicio = st.date_input(
+                "Fecha de inicio",
+                value=st.session_state.get("filtro_fecha_inicio", datetime.today())
+            )
+            st.session_state["filtro_fecha_inicio"] = fecha_inicio
+
+            if st.button("🔄 Limpiar filtros"):
+                st.session_state["filtro_nombre"] = ""
+                st.session_state["filtro_cliente"] = ""
+                st.session_state["filtro_fecha_inicio"] = datetime.today()
+                st.rerun()
 
             rfps = obtener_todas_rfps_por_usuario(user_id)
 
@@ -236,14 +256,74 @@ if st.session_state["logged_in"]:
             for rfp in rfps_filtradas:
                 rfp_id, usuario_id, cliente, nombre_archivo, contenido, fecha_subida = rfp
 
-                with st.expander(f"📄 {nombre_archivo} - Cliente: {cliente} - Subida: {fecha_subida}"):
-                    st.markdown("Haz clic para ver detalles y acciones disponibles.")
-                    
+                if st.button(f"📄 {nombre_archivo} - Cliente: {cliente} - Subida: {fecha_subida}", key=f"ver_rfp_{rfp_id}"):
+                    st.session_state["current_page"] = "Detalle RFP"
+                    st.session_state["selected_rfp_id"] = rfp_id
+                    st.rerun()
         else:
             st.info("No se encontraron RFPs que coincidan con los filtros.")
-    else:
-        st.error("No se pudo encontrar el usuario en la base de datos.")
+    
+    elif st.session_state["current_page"] == "Detalle RFP":
+        rfp_id = st.session_state.get("selected_rfp_id")
+        user_id = obtener_user_id_por_email(st.session_state["user"])
 
+        if rfp_id and user_id:
+            # Cabecera principal con logo
+            st.image("logo_empresa.png", width=100)
+            st.title("Análisis de RFPs con IA")
+
+            # Subtítulo con botón para volver atrás
+            st.markdown("### 📁 Mis RFPs")
+            if st.button("⬅️ Volver al listado"):
+                st.session_state["current_page"] = "Mis RFPs"
+                st.session_state.pop("selected_rfp_id", None)
+                st.rerun()
+
+            # Obtener documentos de la RFP
+            documentos = obtener_documentos_por_rfp_y_usuario(rfp_id, user_id)
+
+            if not documentos:
+                st.warning("Esta RFP no tiene documentos asociados.")
+                st.stop()
+
+            # Estructura base
+            estructura_rfp = {
+                "Evaluación Inicial": ["Análisis rápido", "Alineación estratégica", "Ventaja Competitiva", "Decisión de Participar"],
+                "Análisis Profundo": ["Comprensión Detallada", "Identificación de 'dolores'", "Preguntas Aclaratorias", "Evaluación de Recursos"],
+                "Desarrollo de la Propuesta": ["Estructura del Índice", "Resumen ejecutivo", "Solución Propuesta", "Beneficios y Valor Añadido", "Experiencia y Credenciales", "Equipo de Proyecto", "Cronograma y Presupuesto", "Cumplimiento de Requisitos"],
+                "Revisión y Aprobación": ["Revisión Interna", "Aprobación Responsable"]
+            }
+
+            # Estructura con contenido
+            docs_por_categoria = {cat: {sub: [] for sub in subs} for cat, subs in estructura_rfp.items()}
+
+            for doc in documentos:
+                _, titulo, contenido, _, nombre_categoria, nombre_subcategoria = doc
+                if nombre_categoria in docs_por_categoria and nombre_subcategoria in docs_por_categoria[nombre_categoria]:
+                    docs_por_categoria[nombre_categoria][nombre_subcategoria].append((titulo, contenido))
+
+            # Filtrar categorías que tengan al menos una subcategoría con documentos
+            categorias_con_docs = {
+                cat: subs for cat, subs in docs_por_categoria.items()
+                if any(sub_docs for sub_docs in subs.values())
+            }
+
+            if not categorias_con_docs:
+                st.info("No hay contenido disponible en ninguna categoría.")
+                st.stop()
+
+            # Mostrar tabs por cada categoría con subcategorías como secciones
+            tabs = st.tabs(list(categorias_con_docs.keys()))
+
+            for tab, (categoria, subcats) in zip(tabs, categorias_con_docs.items()):
+                with tab:
+                    for subcat, docs in subcats.items():
+                        if docs:
+                            st.markdown(f"### 🗂️ {subcat}")
+                            for titulo, contenido in docs:
+                                with st.container(border=True):
+                                    st.markdown(f"**📄 {titulo}**")
+                                    st.write(contenido)
     
     function_mapping = {
         "Análisis rápido": get_ai_summary_and_steps_gemini,

@@ -236,6 +236,36 @@ def eliminar_documento_usuario(doc_id, usuario_id):
         print("Error al eliminar documento:", e)
         return False
     
+def obtener_documentos_por_rfp_y_usuario(rfp_id, usuario_id):
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT id FROM rfps
+            WHERE id = ? AND usuario_id = ?
+        ''', (rfp_id, usuario_id))
+        rfp_valida = cursor.fetchone()
+
+        if rfp_valida is None:
+            print("La RFP no pertenece al usuario o no existe.")
+            conn.close()
+            return []
+
+        cursor.execute('''
+            SELECT id, titulo, contenido, fecha_creacion, categoria_id, subcategoria_id
+            FROM documentos_usuario
+            WHERE rfp_id = ?
+        ''', (rfp_id,))
+        documentos = cursor.fetchall()
+
+        conn.close()
+        return documentos
+
+    except Exception as e:
+        print("Error al obtener documentos por RFP y usuario:", e)
+        return []
+    
 def obtener_user_id_por_email(email):
     conn = get_connection()
     cursor = conn.cursor()
