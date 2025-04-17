@@ -231,10 +231,18 @@ if st.session_state["logged_in"]:
                 st.session_state["filtro_fecha_inicio"] = datetime.today()
                 st.rerun()
 
-            rfps = obtener_todas_rfps_por_usuario(user_id)
+        rfps = obtener_todas_rfps_por_usuario(user_id)
+        rfps_con_docs = []
 
-            rfps_filtradas = []
         for rfp in rfps:
+            rfp_id, usuario_id, cliente, nombre_archivo, contenido, fecha_subida = rfp
+            documentos = obtener_documentos_por_rfp_y_usuario(rfp_id, user_id)
+
+            if documentos:
+                rfps_con_docs.append(rfp)
+
+        rfps_filtradas = []
+        for rfp in rfps_con_docs:
             rfp_id, usuario_id, cliente, nombre_archivo, contenido, fecha_subida = rfp
 
             # Convertir fecha_subida a objeto datetime
@@ -326,6 +334,14 @@ if st.session_state["logged_in"]:
             subcategorias = {
                 sub: docs for sub, docs in categorias_con_docs[st.session_state["categoria_seleccionada"]].items() if docs
             }
+
+            # Comprobar si la subcategoría seleccionada aún existe, si no, cambiar a una válida
+            if st.session_state["subcategoria_seleccionada"] not in subcategorias:
+                if subcategorias:
+                    st.session_state["subcategoria_seleccionada"] = list(subcategorias.keys())[0]
+                else:
+                    st.info("No hay documentos en esta categoría.")
+                    st.stop()
 
             st.markdown("#### Subcategorías")
             cols_sub = st.columns(len(subcategorias))
