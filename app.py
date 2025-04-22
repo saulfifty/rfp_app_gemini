@@ -420,16 +420,38 @@ if st.session_state["logged_in"]:
                         and nombre_subcategoria == st.session_state["subcategoria_seleccionada"]
                     ):
                         with st.container(border=True):
-                            st.markdown("##### ✏️ Editar Documento")
-
-                            nuevo_titulo = st.text_input("Título", value=titulo, key=f"titulo_{doc_id}")
-                            nuevo_contenido = st.text_area("Contenido", value=contenido, height=200, key=f"contenido_{doc_id}")
+                            st.markdown(
+                                f"""
+                                <div style="padding: 10px 15px;">
+                                    <h4 style="margin-bottom:10px; color:#4b6cb7;">📝 Detalle del Documento</h4>
+                                    <table style="width:100%; border-collapse: collapse;">
+                                        <tr>
+                                            <td style="font-weight:bold; width: 180px; padding: 6px; border-bottom: 1px solid #ddd;">Título</td>
+                                            <td style="padding: 6px; border-bottom: 1px solid #ddd;">
+                                                {st.text_input("", value=titulo, key=f"titulo_{doc_id}")}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:bold; padding: 6px; border-bottom: 1px solid #ddd;">Contenido</td>
+                                            <td style="padding: 6px; border-bottom: 1px solid #ddd;">
+                                                {st.text_area("", value=contenido, height=200, key=f"contenido_{doc_id}")}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:bold; padding: 6px;">Fecha de creación</td>
+                                            <td style="padding: 6px;">{fecha_creacion}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                """,
+                                unsafe_allow_html=True
+                            )
 
                             col1, col2 = st.columns(2)
                             with col1:
                                 if st.button("💾 Actualizar", key=f"actualizar_{doc_id}"):
-                                    actualizar_documento_usuario(doc_id, nuevo_titulo, nuevo_contenido, user_id)
-                                    st.session_state["analysis_cache"][nombre_subcategoria] = nuevo_contenido
+                                    actualizar_documento_usuario(doc_id, st.session_state[f"titulo_{doc_id}"], st.session_state[f"contenido_{doc_id}"], user_id)
+                                    st.session_state["analysis_cache"][nombre_subcategoria] = st.session_state[f"contenido_{doc_id}"]
                                     st.success("Documento actualizado correctamente.")
                                     st.rerun()
                             with col2:
