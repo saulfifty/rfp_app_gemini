@@ -230,6 +230,7 @@ if st.session_state["logged_in"]:
                 st.session_state["filtro_nombre"] = ""
                 st.session_state["filtro_cliente"] = ""
                 st.session_state["filtro_fecha_inicio"] = datetime.today()
+                st.session_state["rfps_visible"] = 5
                 st.rerun()
 
         rfps = obtener_todas_rfps_por_usuario(user_id)
@@ -262,12 +263,24 @@ if st.session_state["logged_in"]:
                 rfps_filtradas.append(rfp)
 
         if rfps_filtradas:
-            for rfp in rfps_filtradas:
+            rfps_filtradas.sort(key=lambda x: x[5], reverse=True)
+
+            if "rfps_visible" not in st.session_state:
+                st.session_state["rfps_visible"] = 5
+
+            rfps_a_mostrar = rfps_filtradas[:st.session_state["rfps_visible"]]
+
+            for rfp in rfps_a_mostrar:
                 rfp_id, usuario_id, cliente, nombre_archivo, contenido, fecha_subida = rfp
 
                 if st.button(f"📄 {nombre_archivo} - Cliente: {cliente} - Subida: {fecha_subida}", key=f"ver_rfp_{rfp_id}"):
                     st.session_state["current_page"] = "Detalle RFP"
                     st.session_state["selected_rfp_id"] = rfp_id
+                    st.rerun()
+
+            if st.session_state["rfps_visible"] < len(rfps_filtradas):
+                if st.button("⬇️ Mostrar más"):
+                    st.session_state["rfps_visible"] += 5
                     st.rerun()
         else:
             st.info("No se encontraron RFPs que coincidan con los filtros.")
