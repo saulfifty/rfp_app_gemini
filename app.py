@@ -270,10 +270,21 @@ if st.session_state["logged_in"]:
 
             rfps_a_mostrar = rfps_filtradas[:st.session_state["rfps_visible"]]
 
+            headers = ["Nombre del archivo", "Cliente", "Fecha de subida", "Acciones"]
+            cols = st.columns([4, 2, 2, 1])
+
+            for i, h in enumerate(headers):
+                cols[i].markdown(f"**{h}**")
+
             for rfp in rfps_a_mostrar:
                 rfp_id, usuario_id, cliente, nombre_archivo, contenido, fecha_subida = rfp
+                cols = st.columns([4, 2, 2, 1])
 
-                if st.button(f"📄 {nombre_archivo} - Cliente: {cliente} - Subida: {fecha_subida}", key=f"ver_rfp_{rfp_id}"):
+                cols[0].markdown(nombre_archivo)
+                cols[1].markdown(cliente)
+                cols[2].markdown(str(fecha_subida))
+
+                if cols[3].button("📄 Ver", key=f"ver_rfp_{rfp_id}"):
                     st.session_state["current_page"] = "Detalle RFP"
                     st.session_state["selected_rfp_id"] = rfp_id
                     st.rerun()
@@ -418,11 +429,13 @@ if st.session_state["logged_in"]:
                             with col1:
                                 if st.button("💾 Actualizar", key=f"actualizar_{doc_id}"):
                                     actualizar_documento_usuario(doc_id, nuevo_titulo, nuevo_contenido, user_id)
+                                    st.session_state["analysis_cache"][nombre_subcategoria] = nuevo_contenido
                                     st.success("Documento actualizado correctamente.")
                                     st.rerun()
                             with col2:
                                 if st.button("🗑️ Eliminar", key=f"eliminar_{doc_id}"):
                                     eliminar_documento_usuario(doc_id, user_id)
+                                    st.session_state["analysis_cache"].pop(nombre_subcategoria, None)
                                     st.success("Documento eliminado correctamente.")
                                     st.rerun()
 
