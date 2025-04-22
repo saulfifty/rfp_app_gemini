@@ -22,7 +22,8 @@ inicializar_base_de_datos()
 
 # Definir las categorías y subcategorías del menú
 menu_options = {
-    "Carga y Configuración": ["Cargar RFP", "Configuración General", "Mis RFPs"],
+    "Home": ["Mis RFPs"],
+    "Carga y Configuración": ["Cargar RFP", "Configuración General"],
     "Evaluación Inicial": ["Análisis rápido", "Alineación estratégica", "Ventaja Competitiva", "Decisión de Participar"],
     "Análisis Profundo": ["Comprensión Detallada", "Identificación de 'dolores'", "Preguntas Aclaratorias", "Evaluación de Recursos"],
     "Desarrollo de la Propuesta": ["Estructura del Índice", "Resumen ejecutivo", "Solución Propuesta", "Beneficios y Valor Añadido", "Experiencia y Credenciales", "Equipo de Proyecto", "Cronograma y Presupuesto", "Cumplimiento de Requisitos"],
@@ -34,9 +35,9 @@ if "logged_in" not in st.session_state:
 if "user" not in st.session_state:
     st.session_state["user"] = None
 if "current_category" not in st.session_state:
-    st.session_state["current_category"] = "Carga y Configuración"
+    st.session_state["current_category"] = "Home"
 if "current_page" not in st.session_state:
-    st.session_state["current_page"] = "Cargar RFP"
+    st.session_state["current_page"] = "Mis RFPs"
 if "rfp_text" not in st.session_state:
     st.session_state["rfp_text"] = ""
 if "show_steps_button" not in st.session_state:
@@ -54,8 +55,8 @@ if "follow_up_steps" not in st.session_state:
 def logout():
     st.session_state["logged_in"] = False
     st.session_state["user"] = None
-    st.session_state["current_category"] = "Carga y Configuración"
-    st.session_state["current_page"] = "Cargar RFP"
+    st.session_state["current_category"] = "Home"
+    st.session_state["current_page"] = "Mis RFPs"
     st.session_state["show_welcome_message"] = True
 
 def clean_text(text):
