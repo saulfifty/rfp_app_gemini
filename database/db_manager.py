@@ -41,6 +41,7 @@ def usuario_existe(email):
 
 def guardar_rfp(usuario_id, nombre_archivo, contenido, cliente):
     usuario_id = supabase.auth.get_user()
+    st.write("ID de usuario:", usuario_id)
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     st.write("Datos a insertar en RFP:", {
         "usuario_id": usuario_id,
