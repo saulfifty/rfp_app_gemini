@@ -23,7 +23,7 @@ def registrar_usuario(nombre_usuario, email, contrasena):
         st.write("🔍 Respuesta Supabase:", response)
         return not response.error
     except Exception as e:
-        st.error("Error desde Supabase: " + e)
+        st.error("Error desde Supabase: " + str(e))
         return False
 
 def verificar_credenciales(email, contrasena):
