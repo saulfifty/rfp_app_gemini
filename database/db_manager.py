@@ -41,6 +41,13 @@ def usuario_existe(email):
 
 def guardar_rfp(usuario_id, nombre_archivo, contenido, cliente):
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    st.write("Datos a insertar en RFP:", {
+        "usuario_id": usuario_id,
+        "cliente": cliente,
+        "nombre_archivo": nombre_archivo,
+        "contenido": contenido,
+        "fecha_subida": fecha
+    })
     try:
         response = supabase.table("rfps").insert({
             "usuario_id": usuario_id,
@@ -49,8 +56,10 @@ def guardar_rfp(usuario_id, nombre_archivo, contenido, cliente):
             "contenido": contenido,
             "fecha_subida": fecha
         }).execute()
+        st.write("Respuesta de Supabase al guardar RFP:", response)
         return response.data[0]["id"] if response.data else False
     except Exception as e:
+        st.error("Error al guardar RFP: " + str(e))
         print("Error al guardar RFP:", e)
         return False
 
@@ -198,8 +207,11 @@ def obtener_documentos_por_rfp_y_usuario(rfp_id, usuario_id):
     
 def obtener_user_id_por_email(email):
     response = supabase.table("usuarios").select("id").eq("email", email).execute()
+    st.write("Respuesta de Supabase al buscar el usuario:", response)
     if response.data:
+        st.write("ID de usuario encontrado:", response.data[0]["id"])
         return response.data[0]["id"]
+    st.error("No se encontró el usuario con ese email.")
     return None
 
 def es_correo_valido(email):
