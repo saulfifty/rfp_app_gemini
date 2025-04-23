@@ -35,6 +35,14 @@ def verificar_credenciales(email, contrasena):
     result = supabase.table("usuarios").select("*").eq("email", email).eq("contrasena", hashed_password).execute()
     return len(result.data) > 0
 
+def login(email, contrasena):
+    hashed_password = hashlib.sha256(contrasena.encode()).hexdigest()
+    response = supabase.auth.sign_in_with_password({"email": email, "password": hashed_password})
+    if response.get('error'):
+        print("Error de autenticación:", response['error'])
+        return None
+    return response['user']
+
 def usuario_existe(email):
     result = supabase.table("usuarios").select("email").eq("email", email).execute()
     return len(result.data) > 0

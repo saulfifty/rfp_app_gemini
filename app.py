@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
-from database.db_manager import (registrar_usuario, verificar_credenciales, usuario_existe, obtener_documentos_por_rfp_y_usuario,
+from database.db_manager import (registrar_usuario, verificar_credenciales, login, usuario_existe, obtener_documentos_por_rfp_y_usuario,
     guardar_rfp, eliminar_documento_usuario, guardar_documento_usuario, obtener_documento_usuario, obtener_todas_rfps_por_usuario,
     actualizar_documento_usuario, obtener_user_id_por_email, es_correo_valido, obtener_todos_documentos_por_usuario)
 from utils.ai_client_gemini import (
@@ -583,6 +583,8 @@ else:
         password = st.text_input("Contraseña", type="password")
         if st.button("Iniciar Sesión"):
             if verificar_credenciales(email, password):
+                user = login(email, password)
+                st.write("Usuario autenticado:", user) 
                 st.session_state["logged_in"] = True
                 st.session_state["user"] = email
                 st.rerun()
