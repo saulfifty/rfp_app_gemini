@@ -20,6 +20,7 @@ def registrar_usuario(nombre_usuario, email, contrasena):
             "email": email,
             "contrasena": hashed_password
         }).execute()
+        print("Registro:", response)
         return not response.error
     except Exception as e:
         print("Error registrando usuario:", e)
@@ -30,6 +31,9 @@ def verificar_credenciales(email, contrasena):
     result = supabase.table("usuarios").select("*").eq("email", email).eq("contrasena", hashed_password).execute()
     return len(result.data) > 0
 
+def usuario_existe(email):
+    result = supabase.table("usuarios").select("email").eq("email", email).execute()
+    return len(result.data) > 0
 
 def guardar_rfp(usuario_id, nombre_archivo, contenido, cliente):
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

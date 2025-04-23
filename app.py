@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
-from database.db_manager import (registrar_usuario, verificar_credenciales, obtener_documentos_por_rfp_y_usuario,
+from database.db_manager import (registrar_usuario, verificar_credenciales, usuario_existe, obtener_documentos_por_rfp_y_usuario,
     guardar_rfp, eliminar_documento_usuario, guardar_documento_usuario, obtener_documento_usuario, obtener_todas_rfps_por_usuario,
     actualizar_documento_usuario, obtener_user_id_por_email, es_correo_valido, obtener_todos_documentos_por_usuario)
 from utils.ai_client_gemini import (
@@ -570,11 +570,12 @@ else:
                 st.error("El correo electrónico no es válido.")
             elif password != confirmar_password:
                 st.error("Las contraseñas no coinciden.")
-            elif verificar_credenciales(username, password):
-                st.error("El nombre de usuario ya existe.")
+            elif usuario_existe(email):
+                st.error("El correo electrónico ya está registrado.")
+            elif registrar_usuario(username, email, password):
+                st.success("Registro exitoso. Puedes iniciar sesión ahora.")
             else:
-                registrar_usuario(username, email, password)
-                st.success("Usuario registrado correctamente.")
+                st.error("Error al registrar el usuario. Inténtalo de nuevo más tarde.")
 
     elif menu == "Inicio de Sesión":
         st.subheader("Inicio de Sesión")
