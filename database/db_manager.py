@@ -1,14 +1,14 @@
 from supabase import create_client
 from dotenv import load_dotenv
-import os
+import streamlit as st
 import hashlib
 import re
 from datetime import datetime
 
 load_dotenv()
 
-supabase_url = os.getenv("SUPABASE_URL")
-supabase_key = os.getenv("SUPABASE_KEY")
+supabase_url = st.secrets["SUPABASE"]["SUPABASE_URL"]
+supabase_key = st.secrets["SUPABASE"]["SUPABASE_KEY"]
 
 supabase = create_client(supabase_url, supabase_key)
 
