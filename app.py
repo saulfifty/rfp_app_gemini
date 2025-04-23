@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
-from database.db_manager import (inicializar_base_de_datos, registrar_usuario, verificar_credenciales, obtener_documentos_por_rfp_y_usuario,
+from database.db_manager import (registrar_usuario, verificar_credenciales, obtener_documentos_por_rfp_y_usuario,
     guardar_rfp, eliminar_documento_usuario, guardar_documento_usuario, obtener_documento_usuario, obtener_todas_rfps_por_usuario,
     actualizar_documento_usuario, obtener_user_id_por_email, es_correo_valido, obtener_todos_documentos_por_usuario)
 from utils.ai_client_gemini import (
@@ -16,9 +16,6 @@ from utils.ai_client_gemini import (
     get_ai_experience_credentials_gemini, get_ai_project_team_gemini, get_ai_timeline_budget_gemini,
     get_ai_requirements_compliance_gemini, generate_follow_up_steps_gemini
 )
-
-# Inicializar la base de datos
-inicializar_base_de_datos()
 
 # Definir las categorías y subcategorías del menú
 menu_options = {
