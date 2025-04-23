@@ -6,6 +6,7 @@ python-dotenv
 transformers
 rembg
 Pillow
-pysqlite3-binary
 fpdf
 mdclense
+supabase
+postgrest-py
