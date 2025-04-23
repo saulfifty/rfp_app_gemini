@@ -20,10 +20,14 @@ def registrar_usuario(nombre_usuario, email, contrasena):
             "email": email,
             "contrasena": hashed_password
         }).execute()
-        st.write("🔍 Respuesta Supabase:", response)
-        return not response.error
+        if response.data:
+            print("Usuario registrado con éxito:", response.data)
+            return True
+        else:
+            print("Error al registrar usuario:", response.error)
+            return False
     except Exception as e:
-        st.error("Error desde Supabase: " + str(e))
+        print("Error al registrar usuario:", e)
         return False
 
 def verificar_credenciales(email, contrasena):
