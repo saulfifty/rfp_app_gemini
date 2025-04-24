@@ -52,7 +52,7 @@ def login(email, password):
 def guardar_rfp(usuario_id, nombre_archivo, contenido, cliente):
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     st.write("Datos a insertar en RFP:", {
-        "usuario_id": usuario_id,
+        "user_id": usuario_id,
         "cliente": cliente,
         "nombre_archivo": nombre_archivo,
         "contenido": contenido,
@@ -60,7 +60,7 @@ def guardar_rfp(usuario_id, nombre_archivo, contenido, cliente):
     })
     try:
         response = supabase.table("rfps").insert({
-            "usuario_id": usuario_id,
+            "user_id": usuario_id,
             "cliente": cliente,
             "nombre_archivo": nombre_archivo,
             "contenido": contenido,
@@ -84,8 +84,8 @@ def guardar_documento_usuario(rfp_id, titulo, contenido, nombre_categoria, nombr
         categoria_id = categoria_resp.data[0]["id"]
 
         subcategoria_resp = supabase.table("subcategorias").insert({
-            "nombre": nombre_subcategoria,
-            "categoria_id": categoria_id
+            "categoria_id": categoria_id,
+            "nombre": nombre_subcategoria
         }).execute()
         subcategoria_id = subcategoria_resp.data[0]["id"]
 
@@ -105,7 +105,7 @@ def guardar_documento_usuario(rfp_id, titulo, contenido, nombre_categoria, nombr
     
 def obtener_todos_documentos_por_usuario(usuario_id):
     try:
-        rfps = supabase.table("rfps").select("id").eq("usuario_id", usuario_id).execute().data
+        rfps = supabase.table("rfps").select("id").eq("user_id", usuario_id).execute().data
         if not rfps:
             return []
 
@@ -119,7 +119,7 @@ def obtener_todos_documentos_por_usuario(usuario_id):
     
 def obtener_todas_rfps_por_usuario(usuario_id):
     try:
-        rfps = supabase.table("rfps").select("*").eq("usuario_id", usuario_id).execute()
+        rfps = supabase.table("rfps").select("*").eq("user_id", usuario_id).execute()
         return rfps.data
     except Exception as e:
         print("Error al obtener rfps del usuario:", e)
@@ -127,7 +127,7 @@ def obtener_todas_rfps_por_usuario(usuario_id):
 
 def obtener_documento_usuario(usuario_id, documento_id):
     try:
-        rfp_check = supabase.table("rfps").select("id").eq("usuario_id", usuario_id).execute().data
+        rfp_check = supabase.table("rfps").select("id").eq("user_id", usuario_id).execute().data
         rfp_ids = [rfp["id"] for rfp in rfp_check]
 
         documento = supabase.table("documentos_usuario").select("*, categorias(nombre), subcategorias(nombre)").eq("id", documento_id).in_("rfp_id", rfp_ids).execute().data
@@ -146,7 +146,7 @@ def actualizar_documento_usuario(doc_id, nuevo_titulo, nuevo_contenido, usuario_
             return False
 
         rfp_id = rfp_check[0]["rfp_id"]
-        rfp_valid = supabase.table("rfps").select("id").eq("id", rfp_id).eq("usuario_id", usuario_id).execute().data
+        rfp_valid = supabase.table("rfps").select("id").eq("id", rfp_id).eq("user_id", usuario_id).execute().data
 
         if not rfp_valid:
             print("La RFP no pertenece al usuario.")
@@ -172,7 +172,7 @@ def eliminar_documento_usuario(doc_id, usuario_id):
             print("Documento no encontrado.")
             return False
 
-        rfp_resp = supabase.table("rfps").select("id").eq("id", documento["rfp_id"]).eq("usuario_id", usuario_id).execute()
+        rfp_resp = supabase.table("rfps").select("id").eq("id", documento["rfp_id"]).eq("user_id", usuario_id).execute()
         if not rfp_resp.data:
             print("La RFP no pertenece al usuario.")
             return False
@@ -200,7 +200,7 @@ def eliminar_documento_usuario(doc_id, usuario_id):
     
 def obtener_documentos_por_rfp_y_usuario(rfp_id, usuario_id):
     try:
-        rfp_resp = supabase.table("rfps").select("id").eq("id", rfp_id).eq("usuario_id", usuario_id).execute()
+        rfp_resp = supabase.table("rfps").select("id").eq("id", rfp_id).eq("user_id", usuario_id).execute()
         if not rfp_resp.data:
             print("La RFP no pertenece al usuario o no existe.")
             return []
