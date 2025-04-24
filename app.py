@@ -110,14 +110,12 @@ if st.session_state["logged_in"]:
     with col2:
         st.title("Análisis de RFPs con IA")
         if st.session_state["show_welcome_message"]:
-            st.toast(f"Bienvenido, {st.session_state['user'].user.email} 👋", icon="✅")
+            st.toast(f"Bienvenido, {st.session_state['user']['email']} 👋", icon="✅")
             st.session_state["show_welcome_message"] = False
     
     # Menú lateral
     with st.sidebar:
-        st.sidebar.success(f"Usuario: {st.session_state['user']}")
-        st.sidebar.success(f"Usuario: {st.session_state['user']}")
-
+        st.sidebar.success(f"Usuario: {st.session_state['user']['email']}")
         for category in menu_options.keys():
             if st.button(category):
                 st.session_state["current_category"] = category
@@ -186,10 +184,10 @@ if st.session_state["logged_in"]:
             st.text_area("Contenido combinado de los RFPs", full_text.strip(), height=300)
             st.session_state["rfp_text"] = full_text.strip()
 
-            user_id = st.session_state["user"].id
+            user_id = st.session_state['user']['id']
             nombre_completo_archivos = ", ".join(file_names)
 
-            rfp_id = guardar_rfp(nombre_completo_archivos, full_text.strip(), client_name)
+            rfp_id = guardar_rfp(nombre_completo_archivos, full_text.strip(), client_name, st.session_state["user"]["access_token"])
 
             if rfp_id:
                 st.session_state["rfp_id"] = rfp_id
@@ -202,7 +200,7 @@ if st.session_state["logged_in"]:
     elif st.session_state["current_page"] == "Mis RFPs":
         st.subheader("📁 Mis RFPs")
 
-        user_id = st.session_state["user"].id
+        user_id = st.session_state['user']['id']
 
         if user_id:
 
@@ -298,7 +296,7 @@ if st.session_state["logged_in"]:
     
     elif st.session_state["current_page"] == "Detalle RFP":
         rfp_id = st.session_state.get("selected_rfp_id")
-        user_id = st.session_state["user"].id
+        user_id = st.session_state['user']['id']
 
         if rfp_id and user_id:
             if st.button("⬅️ Volver al listado"):
@@ -326,7 +324,7 @@ if st.session_state["logged_in"]:
             if st.session_state["current_page"] in subcategorias_totales:
                 subcategoria = st.session_state["current_page"]
                 rfp_id = st.session_state.get("selected_rfp_id")
-                user_id = st.session_state["user"].id
+                user_id = st.session_state['user']['id']
 
                 # Intentar obtener el documento actualizado desde la base de datos
                 documento = obtener_documentos_por_rfp_y_usuario(rfp_id, user_id)
@@ -589,7 +587,12 @@ else:
             response = login(email, password)
             if response:
                 st.session_state["logged_in"] = True
-                st.session_state["user"] = response
+                st.session_state["user"] = {
+                    "id": response.user.id,
+                    "email": response.user.email,
+                    "access_token": response.session.access_token,
+                    "refresh_token": response.session.refresh_token,
+                }
                 st.rerun()
             else:
                 st.error("Correo electrónico o contraseña incorrectos.")
