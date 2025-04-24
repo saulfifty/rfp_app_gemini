@@ -79,7 +79,9 @@ def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id, refre
     st.write("Refresh token:", refresh_token)
     st.write("User ID:", user_id)
     st.write("uid:", user)
-    st.write("type uid:", type(user))
+    st.write("user.user.id:", user.user.id)
+    st.write("type user.user.id:", type(user.user.id))
+    st.write("type user.user:", type(user.user))
     
     # # Verificar si el user_id proporcionado coincide con el uid del usuario autenticado
     # if user and user.id != user_id:  # Acceder directamente a 'user.id'
