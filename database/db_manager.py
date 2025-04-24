@@ -37,12 +37,16 @@ def login(email, password):
             "email": email,
             "password": password
         })
-        if "error" in response:
-            print("Error de autenticación:", response["error"])
+        st.write("🔐 Respuesta login:", response)
+
+        if hasattr(response, "user") and response.user:
+            return response.user
+        else:
+            st.error("No se pudo iniciar sesión. ¿Quizás tu correo no está verificado?")
             return None
-        return response.get("user")
     except Exception as e:
-        print("Excepción durante login:", e)
+        st.error("Excepción durante login:")
+        st.exception(e)
         return None
 
 def guardar_rfp(usuario_id, nombre_archivo, contenido, cliente):

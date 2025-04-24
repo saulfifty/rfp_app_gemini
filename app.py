@@ -572,7 +572,9 @@ else:
             elif password != confirmar_password:
                 st.error("Las contraseñas no coinciden.")
             elif registrar_usuario(email, password):
-                st.success("Registro exitoso. Puedes iniciar sesión ahora.")
+                st.success("Registro exitoso.")
+                st.info("📧 Se ha enviado un correo de verificación. Por favor, revisa tu bandeja de entrada y confirma tu correo para poder iniciar sesión.")
+
             else:
                 st.error("Error al registrar el usuario. Inténtalo de nuevo más tarde.")
 
