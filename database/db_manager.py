@@ -50,7 +50,6 @@ def login(email, password):
 
 def guardar_rfp(nombre_archivo, contenido, cliente, access_token):
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    headers = {"Authorization": f"Bearer {access_token}"}
     try:
         response = supabase.table("rfps").insert({
             "user_id": "auth.uid()",
@@ -58,7 +57,7 @@ def guardar_rfp(nombre_archivo, contenido, cliente, access_token):
             "nombre_archivo": nombre_archivo,
             "contenido": contenido,
             "fecha_subida": fecha
-        }).execute(headers=headers)
+        }).execute()
         st.write("Respuesta de Supabase al guardar RFP:", response)
         return response.data[0]["id"] if response.data else False
     except Exception as e:
