@@ -18,10 +18,17 @@ def registrar_usuario(email, password):
             "email": email,
             "password": password
         })
-        st.write("Respuesta de Supabase al registrar usuario:", response)
-        return response.get("user") is not None
+        st.write("📬 Respuesta de Supabase al registrar usuario:", response)
+
+        if hasattr(response, "user") and response.user:
+            return True
+        else:
+            st.error("No se pudo registrar el usuario. Revisa la respuesta.")
+            return False
+
     except Exception as e:
-        print("Error al registrar usuario:", e)
+        st.error("⚠️ Error al registrar usuario:")
+        st.exception(e)
         return False
 
 def login(email, password):
