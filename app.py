@@ -232,6 +232,7 @@ if st.session_state["logged_in"]:
                 st.rerun()
 
         rfps = obtener_todas_rfps_por_usuario(user_id)
+        st.write("rfps", rfps)
         rfps_con_docs = []
 
         for rfp in rfps:
