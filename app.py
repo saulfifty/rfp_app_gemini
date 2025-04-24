@@ -115,7 +115,7 @@ if st.session_state["logged_in"]:
     
     # Menú lateral
     with st.sidebar:
-        st.sidebar.success(f"Usuario: {st.session_state['user'].email}")
+        st.sidebar.success(f"Usuario: {st.session_state['user']}")
 
         for category in menu_options.keys():
             if st.button(category):
