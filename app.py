@@ -386,7 +386,7 @@ if st.session_state["logged_in"]:
             <style>
                 .titulo-seccion {
                     text-align: center;
-                    font-size: 0.9rem;
+                    font-size: 2rem;
                     font-weight: bold;
                     margin-top: 10px;
                     margin-bottom: 10px;
