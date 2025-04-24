@@ -386,7 +386,7 @@ if st.session_state["logged_in"]:
             <style>
                 .titulo-seccion {
                     text-align: center;
-                    font-size: 2rem;
+                    font-size: 1.5rem;
                     font-weight: bold;
                     margin-top: 10px;
                     margin-bottom: 10px;
@@ -407,19 +407,27 @@ if st.session_state["logged_in"]:
 
             # Categorías
             st.markdown('<div class="titulo-seccion">Categorías</div>', unsafe_allow_html=True)
+
+            categoria_actual = st.session_state.get("categoria_seleccionada")
+
+            if categoria_actual not in categorias_con_docs:
+                categoria_actual = list(categorias_con_docs.keys())[0]
+                st.session_state["categoria_seleccionada"] = categoria_actual
+
             cols = st.columns(len(categorias_con_docs))
             for i, categoria in enumerate(categorias_con_docs.keys()):
                 estilo = "font-weight:bold; color:#ffffff; background-color:#4b6cb7; border-radius:5px; padding:5px 10px;" if categoria == st.session_state["categoria_seleccionada"] else "color:#4b6cb7;"
                 with cols[i]:
                     if st.button(categoria, key=f"cat_{categoria}"):
-                        st.session_state["categoria_seleccionada"] = categoria
+                        categoria_actual = categoria
+                        st.session_state["categoria_seleccionada"] = categoria_actual
                         subcats = categorias_con_docs[categoria]
                         primera_sub = next((s for s, d in subcats.items() if d), None)
                         st.session_state["subcategoria_seleccionada"] = primera_sub
 
             # Subcategorías
             subcategorias = {
-                sub: docs for sub, docs in categorias_con_docs[st.session_state["categoria_seleccionada"]].items() if docs
+                sub: docs for sub, docs in categorias_con_docs[categoria_actual].items() if docs
             }
 
             if st.session_state["subcategoria_seleccionada"] not in subcategorias:
