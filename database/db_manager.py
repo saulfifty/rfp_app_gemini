@@ -39,7 +39,7 @@ def login(email, password):
         st.write("🔐 Respuesta login:", response)
 
         if hasattr(response, "user") and response.user:
-            return response.user
+            return response
         else:
             st.error("No se pudo iniciar sesión. ¿Quizás tu correo no está verificado?")
             return None

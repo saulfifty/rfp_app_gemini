@@ -116,6 +116,7 @@ if st.session_state["logged_in"]:
     # Menú lateral
     with st.sidebar:
         st.sidebar.success(f"Usuario: {st.session_state['user']}")
+        st.sidebar.success(f"Usuario: {st.session_state['user']}")
 
         for category in menu_options.keys():
             if st.button(category):
@@ -585,11 +586,10 @@ else:
         email = st.text_input("Correo Electrónico")
         password = st.text_input("Contraseña", type="password")
         if st.button("Iniciar Sesión"):
-            user = login(email, password)
-            if user:
+            response = login(email, password)
+            if response:
                 st.session_state["logged_in"] = True
-                st.session_state["user"] = user
-                st.write("Usuario autenticado:", user)
+                st.session_state["user"] = response
                 st.rerun()
             else:
                 st.error("Correo electrónico o contraseña incorrectos.")
