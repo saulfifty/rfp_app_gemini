@@ -110,7 +110,7 @@ if st.session_state["logged_in"]:
     with col2:
         st.title("Análisis de RFPs con IA")
         if st.session_state["show_welcome_message"]:
-            st.toast(f"Bienvenido, {st.session_state['user'].email} 👋", icon="✅")
+            st.toast(f"Bienvenido, {st.session_state['user'].user.email} 👋", icon="✅")
             st.session_state["show_welcome_message"] = False
     
     # Menú lateral
