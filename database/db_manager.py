@@ -10,9 +10,7 @@ load_dotenv()
 supabase_url = st.secrets["SUPABASE"]["SUPABASE_URL"]
 supabase_key = st.secrets["SUPABASE"]["SUPABASE_KEY"]
 
-supabase: Client = create_client(url, key)
-
-supabase = create_client(supabase_url, supabase_key)
+supabase: Client = create_client(supabase_url, supabase_key)
 
 def registrar_usuario(email, password):
     try:
