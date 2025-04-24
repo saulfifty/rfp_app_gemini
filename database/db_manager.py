@@ -71,10 +71,13 @@ def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id, refre
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     # Establecer la sesión del usuario con access_token y refresh_token
-
-    supabaseClient = supabase.auth.set_session(access_token, refresh_token)
-    user = supabase.auth.get_user()
+    supabase.auth.set_session(access_token, refresh_token)
     
+    # Obtener el cliente de base de datos
+    supabaseClient = supabase.table("rfps")  # Aquí obtenemos el cliente para la tabla "rfps"
+    
+    user = supabase.auth.get_user()
+
     # Imprimir los valores para depuración
     st.write("Access token:", access_token)
     st.write("Refresh token:", refresh_token)
@@ -84,7 +87,7 @@ def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id, refre
  
     try:
         # Insertar el RFP en la tabla "rfps"
-        response = supabaseClient.table("rfps").insert({
+        response = supabaseClient.insert({
             "user_id": user_id,
             "cliente": cliente,
             "nombre_archivo": nombre_archivo,
@@ -100,6 +103,7 @@ def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id, refre
         st.error("Error al guardar RFP: " + str(e))
         print("Error al guardar RFP:", e)
         return False
+
 
 
 def guardar_documento_usuario(rfp_id, titulo, contenido, nombre_categoria, nombre_subcategoria):
