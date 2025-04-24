@@ -195,19 +195,14 @@ def eliminar_documento_usuario(doc_id, usuario_id):
         return False
     
 def obtener_documentos_por_rfp_y_usuario(rfp_id, usuario_id):
-    st.write("ID de RFP:", rfp_id)
-    st.write("ID de usuario:", usuario_id)
+
     try:
-        # Validamos si la RFP pertenece al usuario
         rfp_resp = supabase.table("rfps").select("*").eq("id", rfp_id).eq("user_id", usuario_id).execute()
-        st.write("Respuesta de validación de RFP:", rfp_resp)
-        st.write("Datos obtenidos:", rfp_resp.data)
 
         if not rfp_resp.data:
             st.warning("La RFP no pertenece al usuario o no existe.")
             return []
 
-        # Obtenemos los documentos de esa RFP
         docs_resp = supabase.table("documentos_usuario").select(
             "id, rfp_id, titulo, contenido, fecha_creacion, categorias(nombre), subcategorias(nombre)"
         ).eq("rfp_id", rfp_id).execute()

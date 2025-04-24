@@ -247,6 +247,9 @@ if st.session_state["logged_in"]:
 
         rfps_filtradas = []
         for rfp in rfps_con_docs:
+            if len(rfp) != 6:
+                st.warning(f"RFP con formato inválido (esperado 6 campos): {rfp}")
+                continue
             rfp_id, usuario_id, cliente, nombre_archivo, contenido, fecha_subida = rfp
 
             # Convertir fecha_subida a objeto datetime
@@ -265,7 +268,10 @@ if st.session_state["logged_in"]:
                 rfps_filtradas.append(rfp)
 
         if rfps_filtradas:
-            rfps_filtradas.sort(key=lambda x: x[5], reverse=True)
+            try:
+                rfps_filtradas.sort(key=lambda x: x[5], reverse=True)
+            except IndexError as e:
+                st.error(f"No se pudo ordenar las RFPs: {e}")
 
             if "rfps_visible" not in st.session_state:
                 st.session_state["rfps_visible"] = 5
