@@ -50,13 +50,16 @@ def login(email, password):
 
 def guardar_rfp(nombre_archivo, contenido, cliente):
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    session = supabase.auth.get_user()
+    session = supabase.auth.session()
+    if session is None:
+        st.error("No hay sesión activa.")
+        return False
     user_token = session.access_token
-    supabase_user = create_client(supabase_url, user_token)
     user = supabase.auth.get_user()
-    user_id = user.user.id
+    user_id = session.user.id
+    supabase_user = create_client(supabase_url, user_token)
     st.write("Usuario autenticado:", supabase_user)
-    st.write("Token del usuario:", supabase.auth.session().access_token)
+    st.write("Token del usuario:", user_token)
     st.write("ID de usuario:", user_id)
     try:
         response = supabase_user.table("rfps").insert({
