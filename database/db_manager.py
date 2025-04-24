@@ -88,7 +88,6 @@ def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id, refre
     try:
         # Insertar el RFP en la tabla "rfps"
         response = supabaseClient.insert({
-            "user_id": user_id,
             "cliente": cliente,
             "nombre_archivo": nombre_archivo,
             "contenido": contenido,
