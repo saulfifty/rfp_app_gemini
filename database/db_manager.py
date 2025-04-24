@@ -78,12 +78,13 @@ def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id, refre
     st.write("Access token:", access_token)
     st.write("Refresh token:", refresh_token)
     st.write("User ID:", user_id)
-    st.write("uid:", user)  # Imprimir el objeto completo del usuario para depurar
+    st.write("uid:", user)
+    st.write("type uid:", type(user))
     
-    # Verificar si el user_id proporcionado coincide con el uid del usuario autenticado
-    if user and user.id != user_id:  # Acceder directamente a 'user.id'
-        st.error(f"El user_id no coincide con el uid del usuario autenticado: {user.id}/" + type(user.id) + " != " + type(user_id))
-        return False
+    # # Verificar si el user_id proporcionado coincide con el uid del usuario autenticado
+    # if user and user.id != user_id:  # Acceder directamente a 'user.id'
+    #     st.error(f"El user_id no coincide con el uid del usuario autenticado: {user.id}/" + type(user.id) + " != " + type(user_id))
+    #     return False
     
     try:
         # Insertar el RFP en la tabla "rfps"
