@@ -7,7 +7,7 @@ from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
 from database.db_manager import (registrar_usuario, login, obtener_documentos_por_rfp_y_usuario,
     guardar_rfp, eliminar_documento_usuario, guardar_documento_usuario, obtener_documento_usuario, obtener_todas_rfps_por_usuario,
-    actualizar_documento_usuario, obtener_user_id_por_email, es_correo_valido, obtener_todos_documentos_por_usuario)
+    actualizar_documento_usuario, es_correo_valido, obtener_todos_documentos_por_usuario)
 from utils.ai_client_gemini import (
     get_ai_summary_and_steps_gemini, get_ai_alignment_strategy_gemini, get_ai_competitive_advantage_gemini,
     get_ai_participation_decision_gemini, get_ai_detailed_understanding_gemini, get_ai_pain_points_gemini,
@@ -183,7 +183,7 @@ if st.session_state["logged_in"]:
             st.text_area("Contenido combinado de los RFPs", full_text.strip(), height=300)
             st.session_state["rfp_text"] = full_text.strip()
 
-            user_id = obtener_user_id_por_email(st.session_state["user"])
+            user_id = st.session_state["user"].id
             nombre_completo_archivos = ", ".join(file_names)
 
             rfp_id = guardar_rfp(user_id, nombre_completo_archivos, full_text.strip(), client_name)
@@ -295,7 +295,7 @@ if st.session_state["logged_in"]:
     
     elif st.session_state["current_page"] == "Detalle RFP":
         rfp_id = st.session_state.get("selected_rfp_id")
-        user_id = obtener_user_id_por_email(st.session_state["user"])
+        user_id = st.session_state["user"].id
 
         if rfp_id and user_id:
             if st.button("⬅️ Volver al listado"):
@@ -323,7 +323,7 @@ if st.session_state["logged_in"]:
             if st.session_state["current_page"] in subcategorias_totales:
                 subcategoria = st.session_state["current_page"]
                 rfp_id = st.session_state.get("selected_rfp_id")
-                user_id = obtener_user_id_por_email(st.session_state["user"])
+                user_id = st.session_state["user"].id
 
                 # Intentar obtener el documento actualizado desde la base de datos
                 documento = obtener_documentos_por_rfp_y_usuario(rfp_id, user_id)

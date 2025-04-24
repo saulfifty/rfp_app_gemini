@@ -214,15 +214,6 @@ def obtener_documentos_por_rfp_y_usuario(rfp_id, usuario_id):
     except Exception as e:
         print("Error al obtener documentos por RFP y usuario:", e)
         return []
-    
-def obtener_user_id_por_email(email):
-    response = supabase.table("usuarios").select("id").eq("email", email).execute()
-    st.write("Respuesta de Supabase al buscar el usuario:", response)
-    if response.data:
-        st.write("ID de usuario encontrado:", response.data[0]["id"])
-        return response.data[0]["id"]
-    st.error("No se encontró el usuario con ese email.")
-    return None
 
 def es_correo_valido(email):
     regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
