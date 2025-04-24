@@ -79,7 +79,7 @@ def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id, refre
     st.write("uid:", supabase.auth.get_user())
     # Verificar si el user_id proporcionado coincide con el uid del usuario autenticado
     if user and user.id != user_id:
-        st.error(f"El user_id no coincide con el uid del usuario autenticado: {user['id']}/" + type(user.id))
+        st.error(f"El user_id no coincide con el uid del usuario autenticado: {user.id}/" + type(user.id))
         return False
     try:
         # Insertar el RFP en la tabla "rfps"
