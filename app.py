@@ -231,44 +231,45 @@ if st.session_state["logged_in"]:
                 st.session_state["rfps_visible"] = 5
                 st.rerun()
 
-        rfps = obtener_todas_rfps_por_usuario(user_id)
-        rfps_con_docs = []
+        with st.spinner("⏳ Cargando tus RFPs..."):
+            rfps = obtener_todas_rfps_por_usuario(user_id)
+            rfps_con_docs = []
 
-        for rfp in rfps:
-            rfp_id = rfp["id"]
-            usuario_id = rfp["user_id"]
-            cliente = rfp["cliente"]
-            nombre_archivo = rfp["nombre_archivo"]
-            contenido = rfp["contenido"]
-            fecha_subida = rfp["fecha_subida"]
-            documentos = obtener_documentos_por_rfp_y_usuario(rfp_id, user_id)
-            if documentos:
-                rfps_con_docs.append({
-                    "id": rfp_id,
-                    "user_id": usuario_id,
-                    "cliente": cliente,
-                    "nombre_archivo": nombre_archivo,
-                    "contenido": contenido,
-                    "fecha_subida": fecha_subida
-                })
+            for rfp in rfps:
+                rfp_id = rfp["id"]
+                usuario_id = rfp["user_id"]
+                cliente = rfp["cliente"]
+                nombre_archivo = rfp["nombre_archivo"]
+                contenido = rfp["contenido"]
+                fecha_subida = rfp["fecha_subida"]
+                documentos = obtener_documentos_por_rfp_y_usuario(rfp_id, user_id)
+                if documentos:
+                    rfps_con_docs.append({
+                        "id": rfp_id,
+                        "user_id": usuario_id,
+                        "cliente": cliente,
+                        "nombre_archivo": nombre_archivo,
+                        "contenido": contenido,
+                        "fecha_subida": fecha_subida
+                    })
 
-        rfps_filtradas = []
-        for rfp in rfps_con_docs:
+            rfps_filtradas = []
+            for rfp in rfps_con_docs:
 
-            try:
-                fecha_obj = datetime.strptime(rfp["fecha_subida"], "%Y-%m-%d %H:%M:%S").date()
-            except ValueError:
                 try:
-                    fecha_obj = datetime.strptime(rfp["fecha_subida"], "%Y-%m-%d").date()
+                    fecha_obj = datetime.strptime(rfp["fecha_subida"], "%Y-%m-%d %H:%M:%S").date()
                 except ValueError:
-                    fecha_obj = None
+                    try:
+                        fecha_obj = datetime.strptime(rfp["fecha_subida"], "%Y-%m-%d").date()
+                    except ValueError:
+                        fecha_obj = None
 
-            if (
-                (not nombre_busqueda or nombre_busqueda.lower() in rfp["nombre_archivo"].lower()) and
-                (not cliente_busqueda or cliente_busqueda.lower() in rfp["cliente"].lower())
-            ):
-                rfp["fecha_obj"] = fecha_obj
-                rfps_filtradas.append(rfp)
+                if (
+                    (not nombre_busqueda or nombre_busqueda.lower() in rfp["nombre_archivo"].lower()) and
+                    (not cliente_busqueda or cliente_busqueda.lower() in rfp["cliente"].lower())
+                ):
+                    rfp["fecha_obj"] = fecha_obj
+                    rfps_filtradas.append(rfp)
 
         if rfps_filtradas:
             rfps_filtradas.sort(key=lambda x: x["fecha_obj"] or datetime.min.date(), reverse=True)
