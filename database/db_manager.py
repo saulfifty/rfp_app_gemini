@@ -83,10 +83,10 @@ def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id, refre
     st.write("type user.user.id:", type(user.user.id))
     st.write("type user.user:", type(user.user))
     
-    # # Verificar si el user_id proporcionado coincide con el uid del usuario autenticado
-    # if user and user.id != user_id:  # Acceder directamente a 'user.id'
-    #     st.error(f"El user_id no coincide con el uid del usuario autenticado: {user.id}/" + type(user.id) + " != " + type(user_id))
-    #     return False
+    # Verificar si el user_id proporcionado coincide con el uid del usuario autenticado
+    if user and str(user.user.id) != user_id:  # Acceder directamente a 'user.id'
+        st.error(f"El user_id no coincide con el uid del usuario autenticado: {user.user.id}/"  + "  " + type(user_id))
+        return False
     
     try:
         # Insertar el RFP en la tabla "rfps"
