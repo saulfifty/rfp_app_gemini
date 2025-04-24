@@ -1,4 +1,4 @@
-from supabase import create_client
+from supabase import create_client, Client
 from dotenv import load_dotenv
 import streamlit as st
 import hashlib
@@ -10,6 +10,8 @@ load_dotenv()
 supabase_url = st.secrets["SUPABASE"]["SUPABASE_URL"]
 supabase_key = st.secrets["SUPABASE"]["SUPABASE_KEY"]
 
+supabase: Client = create_client(url, key)
+
 supabase = create_client(supabase_url, supabase_key)
 
 def registrar_usuario(email, password):
@@ -18,6 +20,7 @@ def registrar_usuario(email, password):
             "email": email,
             "password": password
         })
+        st.write("Respuesta de Supabase al registrar usuario:", response)
         return response.get("user") is not None
     except Exception as e:
         print("Error al registrar usuario:", e)
