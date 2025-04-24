@@ -9,7 +9,7 @@ load_dotenv()
 supabase_url = st.secrets["SUPABASE"]["SUPABASE_URL"]
 supabase_key = st.secrets["SUPABASE"]["SUPABASE_KEY"]
 
-supabase: Client = create_client(supabase_url, supabase_key)
+supabase = create_client(supabase_url, supabase_key)
 
 def registrar_usuario(email, password):
     try:
@@ -50,11 +50,17 @@ def login(email, password):
 
 def guardar_rfp(nombre_archivo, contenido, cliente):
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    session = supabase.auth.session()
+    user_token = session.access_token
+    supabase_user = create_client(supabase_url, user_token)
     user = supabase.auth.get_user()
     user_id = user.user.id
+    st.write("Usuario autenticado:", supabase_user)
+    st.write("Token del usuario:", supabase.auth.session().access_token)
     st.write("ID de usuario:", user_id)
     try:
-        response = supabase.table("rfps").insert({
+        response = supabase_user.table("rfps").insert({
+            "user_id": user_id,
             "cliente": cliente,
             "nombre_archivo": nombre_archivo,
             "contenido": contenido,
