@@ -243,35 +243,35 @@ if st.session_state["logged_in"]:
             fecha_subida = rfp["fecha_subida"]
             documentos = obtener_documentos_por_rfp_y_usuario(rfp_id, user_id)
             if documentos:
-                rfps_con_docs.append(rfp)
+                rfps_con_docs.append({
+                    "id": rfp_id,
+                    "user_id": usuario_id,
+                    "cliente": cliente,
+                    "nombre_archivo": nombre_archivo,
+                    "contenido": contenido,
+                    "fecha_subida": fecha_subida
+                })
 
         rfps_filtradas = []
         for rfp in rfps_con_docs:
-            if len(rfp) != 6:
-                st.warning(f"RFP con formato inválido (esperado 6 campos): {rfp}")
-                continue
-            rfp_id, usuario_id, cliente, nombre_archivo, contenido, fecha_subida = rfp
 
-            # Convertir fecha_subida a objeto datetime
             try:
-                fecha_obj = datetime.strptime(fecha_subida, "%Y-%m-%d %H:%M:%S").date()
+                fecha_obj = datetime.strptime(rfp["fecha_subida"], "%Y-%m-%d %H:%M:%S").date()
             except ValueError:
                 try:
-                    fecha_obj = datetime.strptime(fecha_subida, "%Y-%m-%d").date()
+                    fecha_obj = datetime.strptime(rfp["fecha_subida"], "%Y-%m-%d").date()
                 except ValueError:
                     fecha_obj = None
 
             if (
-                (not nombre_busqueda or nombre_busqueda.lower() in nombre_archivo.lower()) and
-                (not cliente_busqueda or cliente_busqueda.lower() in cliente.lower())
+                (not nombre_busqueda or nombre_busqueda.lower() in rfp["nombre_archivo"].lower()) and
+                (not cliente_busqueda or cliente_busqueda.lower() in rfp["cliente"].lower())
             ):
+                rfp["fecha_obj"] = fecha_obj
                 rfps_filtradas.append(rfp)
 
         if rfps_filtradas:
-            try:
-                rfps_filtradas.sort(key=lambda x: x[5], reverse=True)
-            except IndexError as e:
-                st.error(f"No se pudo ordenar las RFPs: {e}")
+            rfps_filtradas.sort(key=lambda x: x["fecha_obj"] or datetime.min.date(), reverse=True)
 
             if "rfps_visible" not in st.session_state:
                 st.session_state["rfps_visible"] = 5
@@ -280,21 +280,18 @@ if st.session_state["logged_in"]:
 
             headers = ["Nombre del archivo", "Cliente", "Fecha de subida", "Acciones"]
             cols = st.columns([4, 2, 2, 1])
-
             for i, h in enumerate(headers):
                 cols[i].markdown(f"**{h}**")
 
             for rfp in rfps_a_mostrar:
-                rfp_id, usuario_id, cliente, nombre_archivo, contenido, fecha_subida = rfp
                 cols = st.columns([4, 2, 2, 1])
+                cols[0].markdown(rfp["nombre_archivo"])
+                cols[1].markdown(rfp["cliente"])
+                cols[2].markdown(str(rfp["fecha_subida"]))
 
-                cols[0].markdown(nombre_archivo)
-                cols[1].markdown(cliente)
-                cols[2].markdown(str(fecha_subida))
-
-                if cols[3].button("📄 Ver", key=f"ver_rfp_{rfp_id}"):
+                if cols[3].button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
                     st.session_state["current_page"] = "Detalle RFP"
-                    st.session_state["selected_rfp_id"] = rfp_id
+                    st.session_state["selected_rfp_id"] = rfp["id"]
                     st.rerun()
 
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
