@@ -73,14 +73,18 @@ def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id, refre
     # Establecer la sesión del usuario con access_token y refresh_token
     supabase.auth.set_session(access_token, refresh_token)
     user = supabase.auth.get_user()
+    
+    # Imprimir los valores para depuración
     st.write("Access token:", access_token)
     st.write("Refresh token:", refresh_token)
     st.write("User ID:", user_id)
-    st.write("uid:", supabase.auth.get_user())
+    st.write("uid:", user)  # Imprimir el objeto completo del usuario para depurar
+    
     # Verificar si el user_id proporcionado coincide con el uid del usuario autenticado
-    if user and user.user.id != user_id:
-        st.error(f"El user_id no coincide con el uid del usuario autenticado: {user.user.id}/" + type(user.user.id) + " != " + type(user_id))
+    if user and user.id != user_id:  # Acceder directamente a 'user.id'
+        st.error(f"El user_id no coincide con el uid del usuario autenticado: {user.id}/" + type(user.id) + " != " + type(user_id))
         return False
+    
     try:
         # Insertar el RFP en la tabla "rfps"
         response = supabase.table("rfps").insert({
@@ -99,6 +103,7 @@ def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id, refre
         st.error("Error al guardar RFP: " + str(e))
         print("Error al guardar RFP:", e)
         return False
+
 
 def guardar_documento_usuario(rfp_id, titulo, contenido, nombre_categoria, nombre_subcategoria):
     try:
