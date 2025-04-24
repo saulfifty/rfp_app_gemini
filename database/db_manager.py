@@ -48,56 +48,21 @@ def login(email, password):
         st.exception(e)
         return None
 
-# def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id):
-#     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-#     supabase.auth.set_session(access_token)
-#     st.write("Access token:", access_token)
-#     st.write("User ID:", user_id)
-#     try:
-#         response = supabase.table("rfps").insert({
-#             "user_id": user_id,
-#             "cliente": cliente,
-#             "nombre_archivo": nombre_archivo,
-#             "contenido": contenido,
-#             "fecha_subida": fecha
-#         }).execute()
-#         st.write("Respuesta de Supabase al guardar RFP:", response)
-#         return response.data[0]["id"] if response.data else False
-#     except Exception as e:
-#         st.error("Error al guardar RFP: " + str(e))
-#         print("Error al guardar RFP:", e)
-#         return False
 def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id, refresh_token):
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
-    # Establecer la sesión del usuario con access_token y refresh_token
     supabase.auth.set_session(access_token, refresh_token)
     
-    # Obtener el cliente de base de datos
-    supabaseClient = supabase.table("rfps")  # Aquí obtenemos el cliente para la tabla "rfps"
-    
-    user = supabase.auth.get_user()
-
-    # Imprimir los valores para depuración
-    st.write("Access token:", access_token)
-    st.write("Refresh token:", refresh_token)
-    st.write("User ID:", user_id)
-    st.write("uid:", user)
-    st.write("supabaseClient:", supabaseClient)
- 
+    supabaseClient = supabase.table("rfps")
+     
     try:
-        # Insertar el RFP en la tabla "rfps"
         response = supabaseClient.insert({
             "user_id": user_id,
             "cliente": cliente,
             "nombre_archivo": nombre_archivo,
             "contenido": contenido,
             "fecha_subida": fecha
-        }).execute()
-
-        st.write("Respuesta de Supabase al guardar RFP:", response)
-        
-        # Devolver el ID del RFP insertado o False si no se insertó correctamente
+        }).execute()        
         return response.data[0]["id"] if response.data else False
     except Exception as e:
         st.error("Error al guardar RFP: " + str(e))
@@ -153,6 +118,7 @@ def obtener_todos_documentos_por_usuario(usuario_id):
 def obtener_todas_rfps_por_usuario(usuario_id):
     try:
         rfps = supabase.table("rfps").select("*").eq("user_id", usuario_id).execute()
+        st.write("Respuesta de Supabase al obtener rfps:", rfps)
         return rfps.data
     except Exception as e:
         print("Error al obtener rfps del usuario:", e)
