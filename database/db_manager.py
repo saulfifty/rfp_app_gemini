@@ -67,13 +67,14 @@ def login(email, password):
 #         st.error("Error al guardar RFP: " + str(e))
 #         print("Error al guardar RFP:", e)
 #         return False
-def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id):
+def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id, refresh_token):
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
-    # Establecer la sesión del usuario con el access_token
-    supabase.auth.set_session(access_token)
-
+    # Establecer la sesión del usuario con access_token y refresh_token
+    supabase.auth.set_session(access_token, refresh_token)
+    
     st.write("Access token:", access_token)
+    st.write("Refresh token:", refresh_token)
     st.write("User ID:", user_id)
     
     try:
@@ -94,6 +95,7 @@ def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id):
         st.error("Error al guardar RFP: " + str(e))
         print("Error al guardar RFP:", e)
         return False
+
 def guardar_documento_usuario(rfp_id, titulo, contenido, nombre_categoria, nombre_subcategoria):
     try:
         fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

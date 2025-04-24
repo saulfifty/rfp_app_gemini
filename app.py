@@ -187,7 +187,7 @@ if st.session_state["logged_in"]:
             user_id = st.session_state['user']['id']
             nombre_completo_archivos = ", ".join(file_names)
 
-            rfp_id = guardar_rfp(nombre_completo_archivos, full_text.strip(), client_name, st.session_state["user"]["access_token"], st.session_state["user"]["id"])
+            rfp_id = guardar_rfp(nombre_completo_archivos, full_text.strip(), client_name, st.session_state["user"]["access_token"], st.session_state["user"]["id"], st.session_state['user']['refresh_token'])
 
             if rfp_id:
                 st.session_state["rfp_id"] = rfp_id
