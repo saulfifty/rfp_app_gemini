@@ -108,12 +108,12 @@ if st.session_state["logged_in"]:
     with col2:
         st.title("Análisis de RFPs con IA")
         if st.session_state["show_welcome_message"]:
-            st.toast(f"Bienvenido, {st.session_state['user']} 👋", icon="✅")
+            st.toast(f"Bienvenido, {st.session_state['user'].email} 👋", icon="✅")
             st.session_state["show_welcome_message"] = False
     
     # Menú lateral
     with st.sidebar:
-        st.sidebar.success(f"Usuario: {st.session_state['user']}")
+        st.sidebar.success(f"Usuario: {st.session_state['user'].email}")
 
         for category in menu_options.keys():
             if st.button(category):
@@ -199,7 +199,7 @@ if st.session_state["logged_in"]:
     elif st.session_state["current_page"] == "Mis RFPs":
         st.subheader("📁 Mis RFPs")
 
-        user_id = obtener_user_id_por_email(st.session_state["user"])
+        user_id = st.session_state["user"].id
 
         if user_id:
 
