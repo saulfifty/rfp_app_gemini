@@ -195,7 +195,9 @@ def eliminar_documento_usuario(doc_id, usuario_id):
         return False
     
 def obtener_documentos_por_rfp_y_usuario(rfp_id, usuario_id):
+    st.write("usuario_id:", usuario_id)
     try:
+        st.write("RFP ID:", rfp_id)
         rfp_resp = supabase.table("rfps").select("id").eq("id", rfp_id).eq("user_id", usuario_id).execute()
         st.write("RFP Response:", rfp_resp.data)
         if not rfp_resp.data:
