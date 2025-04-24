@@ -48,12 +48,36 @@ def login(email, password):
         st.exception(e)
         return None
 
+# def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id):
+#     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+#     supabase.auth.set_session(access_token)
+#     st.write("Access token:", access_token)
+#     st.write("User ID:", user_id)
+#     try:
+#         response = supabase.table("rfps").insert({
+#             "user_id": user_id,
+#             "cliente": cliente,
+#             "nombre_archivo": nombre_archivo,
+#             "contenido": contenido,
+#             "fecha_subida": fecha
+#         }).execute()
+#         st.write("Respuesta de Supabase al guardar RFP:", response)
+#         return response.data[0]["id"] if response.data else False
+#     except Exception as e:
+#         st.error("Error al guardar RFP: " + str(e))
+#         print("Error al guardar RFP:", e)
+#         return False
 def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id):
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Establecer la sesión del usuario con el access_token
     supabase.auth.set_session(access_token)
+
     st.write("Access token:", access_token)
     st.write("User ID:", user_id)
+    
     try:
+        # Insertar el RFP en la tabla "rfps"
         response = supabase.table("rfps").insert({
             "user_id": user_id,
             "cliente": cliente,
@@ -61,13 +85,15 @@ def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id):
             "contenido": contenido,
             "fecha_subida": fecha
         }).execute()
+
         st.write("Respuesta de Supabase al guardar RFP:", response)
+        
+        # Devolver el ID del RFP insertado o False si no se insertó correctamente
         return response.data[0]["id"] if response.data else False
     except Exception as e:
         st.error("Error al guardar RFP: " + str(e))
         print("Error al guardar RFP:", e)
         return False
-
 def guardar_documento_usuario(rfp_id, titulo, contenido, nombre_categoria, nombre_subcategoria):
     try:
         fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
