@@ -236,8 +236,14 @@ if st.session_state["logged_in"]:
         rfps_con_docs = []
 
         for rfp in rfps:
-            rfp_id, usuario_id, cliente, nombre_archivo, contenido, fecha_subida = rfp
+            rfp_id = rfp["id"]
+            usuario_id = rfp["user_id"]
+            cliente = rfp["cliente"]
+            nombre_archivo = rfp["nombre_archivo"]
+            contenido = rfp["contenido"]
+            fecha_subida = rfp["fecha_subida"]
             st.write(f"RFP ID: {rfp_id}, Usuario ID: {usuario_id}, Cliente: {cliente}, Nombre del archivo: {nombre_archivo}, Contenido: {contenido}, Fecha de subida: {fecha_subida}")
+            rfp_id, usuario_id, cliente, nombre_archivo, contenido, fecha_subida = rfp
             documentos = obtener_documentos_por_rfp_y_usuario(rfp_id, user_id)
             if documentos:
                 rfps_con_docs.append(rfp)
