@@ -361,8 +361,13 @@ if st.session_state["logged_in"]:
             docs_por_categoria = {cat: {sub: [] for sub in subs} for cat, subs in estructura_rfp.items()}
 
             for doc in documentos:
-                st.write(f"Documento: {doc} (tamaño: {len(doc)})")
-                doc_id, titulo, contenido, fecha_creacion, nombre_categoria, nombre_subcategoria = doc
+                doc_id = doc["id"]
+                titulo = doc["titulo"]
+                contenido = doc["contenido"]
+                fecha_creacion = doc["fecha_creacion"]
+                nombre_categoria = doc["categorias"]["nombre"]
+                nombre_subcategoria = doc["subcategorias"]["nombre"]
+                
                 if nombre_categoria in docs_por_categoria and nombre_subcategoria in docs_por_categoria[nombre_categoria]:
                     docs_por_categoria[nombre_categoria][nombre_subcategoria].append((titulo, contenido))
 
@@ -419,7 +424,12 @@ if st.session_state["logged_in"]:
             if docs:
                 st.markdown("### Documentos")
                 for doc in documentos:
-                    doc_id, titulo, contenido, fecha_creacion, nombre_categoria, nombre_subcategoria = doc
+                    doc_id = doc["id"]
+                    titulo = doc["titulo"]
+                    contenido = doc["contenido"]
+                    fecha_creacion = doc["fecha_creacion"]
+                    nombre_categoria = doc["categorias"]["nombre"]
+                    nombre_subcategoria = doc["subcategorias"]["nombre"]
 
                     if (
                         nombre_categoria == st.session_state["categoria_seleccionada"]
