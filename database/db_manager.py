@@ -12,40 +12,30 @@ supabase_key = st.secrets["SUPABASE"]["SUPABASE_KEY"]
 
 supabase = create_client(supabase_url, supabase_key)
 
-def registrar_usuario(nombre_usuario, email, contrasena):
-    hashed_password = hashlib.sha256(contrasena.encode()).hexdigest()
+def registrar_usuario(email, password):
     try:
-        response = supabase.table("usuarios").insert({
-            "nombre": nombre_usuario,
+        response = supabase.auth.sign_up({
             "email": email,
-            "contrasena": hashed_password
-        }).execute()
-        if response.data:
-            print("Usuario registrado con éxito:", response.data)
-            return True
-        else:
-            print("Error al registrar usuario:", response.error)
-            return False
+            "password": password
+        })
+        return response.get("user") is not None
     except Exception as e:
         print("Error al registrar usuario:", e)
         return False
 
-def verificar_credenciales(email, contrasena):
-    hashed_password = hashlib.sha256(contrasena.encode()).hexdigest()
-    result = supabase.table("usuarios").select("*").eq("email", email).eq("contrasena", hashed_password).execute()
-    return len(result.data) > 0
-
-def login(email, contrasena):
-    response = supabase.auth.sign_in_with_password({"email": email, "password": contrasena})
-    st.write("Respuesta de Supabase al iniciar sesión:", response)
-    if response.get('error'):
-        print("Error de autenticación:", response['error'])
+def login(email, password):
+    try:
+        response = supabase.auth.sign_in_with_password({
+            "email": email,
+            "password": password
+        })
+        if "error" in response:
+            print("Error de autenticación:", response["error"])
+            return None
+        return response.get("user")
+    except Exception as e:
+        print("Excepción durante login:", e)
         return None
-    return response['user']
-
-def usuario_existe(email):
-    result = supabase.table("usuarios").select("email").eq("email", email).execute()
-    return len(result.data) > 0
 
 def guardar_rfp(usuario_id, nombre_archivo, contenido, cliente):
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

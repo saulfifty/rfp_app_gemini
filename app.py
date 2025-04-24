@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 from utils.pdf_extractor import extract_text_from_pdf
 from fpdf import FPDF
-from database.db_manager import (registrar_usuario, verificar_credenciales, login, usuario_existe, obtener_documentos_por_rfp_y_usuario,
+from database.db_manager import (registrar_usuario, login, obtener_documentos_por_rfp_y_usuario,
     guardar_rfp, eliminar_documento_usuario, guardar_documento_usuario, obtener_documento_usuario, obtener_todas_rfps_por_usuario,
     actualizar_documento_usuario, obtener_user_id_por_email, es_correo_valido, obtener_todos_documentos_por_usuario)
 from utils.ai_client_gemini import (
@@ -559,20 +559,17 @@ else:
         st.subheader("Registro de Usuario")
 
         email = st.text_input("Correo Electrónico")
-        username = st.text_input("Nombre de Usuario")
         password = st.text_input("Contraseña", type="password")
         confirmar_password = st.text_input("Confirmar Contraseña", type="password")
         
         if st.button("Registrar"):
-            if not email or not username or not password or not confirmar_password:
+            if not email or not password or not confirmar_password:
                 st.error("Todos los campos son obligatorios.")
             elif not es_correo_valido(email):
                 st.error("El correo electrónico no es válido.")
             elif password != confirmar_password:
                 st.error("Las contraseñas no coinciden.")
-            elif usuario_existe(email):
-                st.error("El correo electrónico ya está registrado.")
-            elif registrar_usuario(username, email, password):
+            elif registrar_usuario(email, password):
                 st.success("Registro exitoso. Puedes iniciar sesión ahora.")
             else:
                 st.error("Error al registrar el usuario. Inténtalo de nuevo más tarde.")
@@ -582,11 +579,11 @@ else:
         email = st.text_input("Correo Electrónico")
         password = st.text_input("Contraseña", type="password")
         if st.button("Iniciar Sesión"):
-            if verificar_credenciales(email, password):
-                user = login(email, password)
-                st.write("Usuario autenticado:", user) 
+            user = login(email, password)
+            if user:
                 st.session_state["logged_in"] = True
-                st.session_state["user"] = email
+                st.session_state["user"] = user
+                st.write("Usuario autenticado:", user)
                 st.rerun()
             else:
                 st.error("Correo electrónico o contraseña incorrectos.")
