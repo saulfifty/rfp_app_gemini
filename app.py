@@ -241,7 +241,6 @@ if st.session_state["logged_in"]:
             nombre_archivo = rfp["nombre_archivo"]
             contenido = rfp["contenido"]
             fecha_subida = rfp["fecha_subida"]
-            rfp_id, usuario_id, cliente, nombre_archivo, contenido, fecha_subida = rfp
             documentos = obtener_documentos_por_rfp_y_usuario(rfp_id, user_id)
             if documentos:
                 rfps_con_docs.append(rfp)
