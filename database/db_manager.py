@@ -207,7 +207,6 @@ def obtener_documentos_por_rfp_y_usuario(rfp_id, usuario_id):
             "id, rfp_id, titulo, contenido, fecha_creacion, categorias(nombre), subcategorias(nombre)"
         ).eq("rfp_id", rfp_id).execute()
 
-        st.write("Documentos obtenidos:", docs_resp.data)
         return docs_resp.data if docs_resp.data else []
 
     except Exception as e:
