@@ -48,11 +48,14 @@ def login(email, password):
         st.exception(e)
         return None
 
-def guardar_rfp(nombre_archivo, contenido, cliente, access_token):
+def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id):
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    st.write("Access token:", access_token)
+    st.write("User ID:", user_id)
     try:
         response = supabase.table("rfps").insert({
-            "user_id": "auth.uid()",
+            "user_id": user_id,
             "cliente": cliente,
             "nombre_archivo": nombre_archivo,
             "contenido": contenido,
