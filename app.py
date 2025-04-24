@@ -17,6 +17,8 @@ from utils.ai_client_gemini import (
     get_ai_requirements_compliance_gemini, generate_follow_up_steps_gemini
 )
 
+os.environ["WATCHDOG_OBSERVER"] = "false"
+
 # Definir las categorías y subcategorías del menú
 menu_options = {
     "Home": ["Mis RFPs"],
