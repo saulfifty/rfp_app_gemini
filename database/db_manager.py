@@ -118,7 +118,6 @@ def obtener_todos_documentos_por_usuario(usuario_id):
 def obtener_todas_rfps_por_usuario(usuario_id):
     try:
         rfps = supabase.table("rfps").select("*").eq("user_id", usuario_id).execute()
-        st.write("Respuesta de Supabase al obtener rfps:", rfps)
         return rfps.data
     except Exception as e:
         print("Error al obtener rfps del usuario:", e)
