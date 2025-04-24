@@ -325,29 +325,23 @@ if st.session_state["logged_in"]:
                 "Revisión y Aprobación": ["Revisión Interna", "Aprobación Responsable"]
             }
 
-            # Obtener lista de todas las subcategorías
             subcategorias_totales = [sub for lista in estructura_rfp.values() for sub in lista]
 
-            # Dentro del bloque de Detalle RFP
             if st.session_state["current_page"] in subcategorias_totales:
                 subcategoria = st.session_state["current_page"]
                 rfp_id = st.session_state.get("selected_rfp_id")
                 user_id = st.session_state['user']['id']
 
-                # Intentar obtener el documento actualizado desde la base de datos
                 documento = obtener_documentos_por_rfp_y_usuario(rfp_id, user_id)
 
-                # Si el documento existe, sincroniza el analysis_cache
                 if documento:
-                    contenido_documento = documento[0]  # Asumimos que contiene solo un campo 'contenido'
+                    contenido_documento = documento[0]
                     if st.session_state["analysis_cache"].get(subcategoria) != contenido_documento:
                         st.session_state["analysis_cache"][subcategoria] = contenido_documento
                 else:
-                    # Si se ha eliminado el documento, borra del cache
                     if subcategoria in st.session_state["analysis_cache"]:
                         del st.session_state["analysis_cache"][subcategoria]
 
-                # Mostrar textarea solo si hay contenido en el análisis cache
                 if subcategoria in st.session_state["analysis_cache"]:
                     resumen_editable = st.text_area(
                         "Resumen Generado por IA",
@@ -358,7 +352,6 @@ if st.session_state["logged_in"]:
                     st.info("No hay resumen generado para esta subcategoría.")
 
 
-            # Estructura con contenido
             docs_por_categoria = {cat: {sub: [] for sub in subs} for cat, subs in estructura_rfp.items()}
 
             for doc in documentos:
@@ -381,7 +374,6 @@ if st.session_state["logged_in"]:
                 st.info("No hay contenido disponible en ninguna categoría.")
                 st.stop()
 
-            # Inicializar estado para categoría y subcategoría seleccionadas
             if "categoria_seleccionada" not in st.session_state:
                 st.session_state["categoria_seleccionada"] = list(categorias_con_docs.keys())[0]
 
@@ -389,23 +381,47 @@ if st.session_state["logged_in"]:
                 primera_sub = list(categorias_con_docs[st.session_state["categoria_seleccionada"]].keys())[0]
                 st.session_state["subcategoria_seleccionada"] = primera_sub
 
-            # Mostrar pestañas de categorías como botones estilo horizontal
-            st.markdown("#### Categorías")
+            # Estilos comunes para fondos claros u oscuros
+            st.markdown("""
+            <style>
+                .titulo-seccion {
+                    text-align: center;
+                    font-size: 0.9rem;
+                    font-weight: bold;
+                    margin-top: 10px;
+                    margin-bottom: 10px;
+                    color: inherit;
+                }
+                .contenedor-ficha {
+                    border: 1px solid rgba(0,0,0,0.2);
+                    border-radius: 10px;
+                    padding: 15px;
+                    margin-top: 10px;
+                    background-color: rgba(255, 255, 255, 0.05);
+                }
+                .contenedor-ficha.dark {
+                    background-color: rgba(0, 0, 0, 0.3);
+                }
+            </style>
+            """, unsafe_allow_html=True)
+
+            # Categorías
+            st.markdown('<div class="titulo-seccion">Categorías</div>', unsafe_allow_html=True)
             cols = st.columns(len(categorias_con_docs))
             for i, categoria in enumerate(categorias_con_docs.keys()):
                 estilo = "font-weight:bold; color:#ffffff; background-color:#4b6cb7; border-radius:5px; padding:5px 10px;" if categoria == st.session_state["categoria_seleccionada"] else "color:#4b6cb7;"
-                if cols[i].button(categoria, key=f"cat_{categoria}"):
-                    st.session_state["categoria_seleccionada"] = categoria
-                    subcats = categorias_con_docs[categoria]
-                    primera_sub = next((s for s, d in subcats.items() if d), None)
-                    st.session_state["subcategoria_seleccionada"] = primera_sub
+                with cols[i]:
+                    if st.button(categoria, key=f"cat_{categoria}"):
+                        st.session_state["categoria_seleccionada"] = categoria
+                        subcats = categorias_con_docs[categoria]
+                        primera_sub = next((s for s, d in subcats.items() if d), None)
+                        st.session_state["subcategoria_seleccionada"] = primera_sub
 
-            # Obtener subcategorías de la categoría seleccionada
+            # Subcategorías
             subcategorias = {
                 sub: docs for sub, docs in categorias_con_docs[st.session_state["categoria_seleccionada"]].items() if docs
             }
 
-            # Comprobar si la subcategoría seleccionada aún existe, si no, cambiar a una válida
             if st.session_state["subcategoria_seleccionada"] not in subcategorias:
                 if subcategorias:
                     st.session_state["subcategoria_seleccionada"] = list(subcategorias.keys())[0]
@@ -413,17 +429,17 @@ if st.session_state["logged_in"]:
                     st.info("No hay documentos en esta categoría.")
                     st.stop()
 
-            st.markdown("#### Subcategorías")
+            st.markdown('<div class="titulo-seccion">Subcategorías</div>', unsafe_allow_html=True)
             cols_sub = st.columns(len(subcategorias))
             for i, subcat in enumerate(subcategorias.keys()):
                 estilo = "font-weight:bold; color:#ffffff; background-color:#4b6cb7; border-radius:5px; padding:5px 10px;" if subcat == st.session_state["subcategoria_seleccionada"] else "color:#4b6cb7;"
-                if cols_sub[i].button(subcat, key=f"subcat_{subcat}"):
-                    st.session_state["subcategoria_seleccionada"] = subcat
+                with cols_sub[i]:
+                    if st.button(subcat, key=f"subcat_{subcat}"):
+                        st.session_state["subcategoria_seleccionada"] = subcat
 
-            # Mostrar documentos de la subcategoría seleccionada
+
             docs = subcategorias[st.session_state["subcategoria_seleccionada"]]
             if docs:
-                st.markdown("### Documentos")
                 for doc in documentos:
                     doc_id = doc["id"]
                     titulo = doc["titulo"]
