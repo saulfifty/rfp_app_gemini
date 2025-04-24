@@ -52,7 +52,7 @@ def login(email, password):
 def guardar_rfp(nombre_archivo, contenido, cliente):
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     user_id = supabase.auth.get_user().user.id
-    
+    st.write("ID de usuario:", user_id)
     try:
         response = supabase.table("rfps").insert({
             "user_id": user_id,
