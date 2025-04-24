@@ -55,7 +55,7 @@ def guardar_rfp(nombre_archivo, contenido, cliente):
     st.write("ID de usuario:", user_id)
     try:
         response = supabase.table("rfps").insert({
-            "user_id": user_id,
+            "user_id": "",
             "cliente": cliente,
             "nombre_archivo": nombre_archivo,
             "contenido": contenido,
