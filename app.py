@@ -567,6 +567,8 @@ else:
                 st.error("Todos los campos son obligatorios.")
             elif not es_correo_valido(email):
                 st.error("El correo electrónico no es válido.")
+            elif len(password) < 6:
+                st.error("La contraseña debe tener al menos 6 caracteres.")
             elif password != confirmar_password:
                 st.error("Las contraseñas no coinciden.")
             elif registrar_usuario(email, password):
