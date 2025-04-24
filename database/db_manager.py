@@ -49,18 +49,11 @@ def login(email, password):
         st.exception(e)
         return None
 
-def guardar_rfp(usuario_id, nombre_archivo, contenido, cliente):
+def guardar_rfp(nombre_archivo, contenido, cliente):
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    st.write("Datos a insertar en RFP:", {
-        "user_id": usuario_id,
-        "cliente": cliente,
-        "nombre_archivo": nombre_archivo,
-        "contenido": contenido,
-        "fecha_subida": fecha
-    })
+    
     try:
         response = supabase.table("rfps").insert({
-            "user_id": usuario_id,
             "cliente": cliente,
             "nombre_archivo": nombre_archivo,
             "contenido": contenido,
