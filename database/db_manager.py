@@ -38,6 +38,7 @@ def verificar_credenciales(email, contrasena):
 def login(email, contrasena):
     hashed_password = hashlib.sha256(contrasena.encode()).hexdigest()
     response = supabase.auth.sign_in_with_password({"email": email, "password": hashed_password})
+    st.write("Respuesta de Supabase al iniciar sesión:", response)
     if response.get('error'):
         print("Error de autenticación:", response['error'])
         return None
