@@ -50,7 +50,7 @@ def login(email, password):
 
 def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id):
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
+    supabase.auth.set_auth(access_token)
     st.write("Access token:", access_token)
     st.write("User ID:", user_id)
     try:
