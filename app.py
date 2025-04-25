@@ -262,7 +262,7 @@ if st.session_state["logged_in"]:
                     try:
                         fecha_obj = datetime.strptime(rfp["fecha_subida"], "%Y-%m-%d").date()
                     except ValueError:
-                        fecha_obj = None
+                        fecha_obj = datetime.now().date()
 
                 if (
                     (not nombre_busqueda or nombre_busqueda.lower() in rfp["nombre_archivo"].lower()) and
