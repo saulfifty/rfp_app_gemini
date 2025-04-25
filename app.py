@@ -257,12 +257,15 @@ if st.session_state["logged_in"]:
             for rfp in rfps_con_docs:
 
                 try:
-                    fecha_obj = datetime.strptime(rfp["fecha_subida"], "%Y-%m-%d %H:%M:%S").date()
+                    fecha_obj = datetime.strptime(rfp["fecha_subida"], "%Y-%m-%dT%H:%M:%S")
                 except ValueError:
                     try:
-                        fecha_obj = datetime.strptime(rfp["fecha_subida"], "%Y-%m-%d").date()
+                        fecha_obj = datetime.strptime(rfp["fecha_subida"], "%Y-%m-%d %H:%M:%S")
                     except ValueError:
-                        fecha_obj = datetime.now().date()
+                        try:
+                            fecha_obj = datetime.strptime(rfp["fecha_subida"], "%Y-%m-%d")
+                        except ValueError:
+                            fecha_obj = datetime.now()
 
                 if (
                     (not nombre_busqueda or nombre_busqueda.lower() in rfp["nombre_archivo"].lower()) and
@@ -272,7 +275,7 @@ if st.session_state["logged_in"]:
                     rfps_filtradas.append(rfp)
 
         if rfps_filtradas:
-            rfps_filtradas.sort(key=lambda x: x["fecha_obj"] or datetime.min.date(), reverse=True)
+            rfps_filtradas.sort(key=lambda x: x["fecha_obj"], reverse=True)
 
             if "rfps_visible" not in st.session_state:
                 st.session_state["rfps_visible"] = 5
@@ -288,7 +291,7 @@ if st.session_state["logged_in"]:
                 cols = st.columns([4, 2, 2, 1])
                 cols[0].markdown(rfp["nombre_archivo"])
                 cols[1].markdown(rfp["cliente"])
-                cols[2].markdown(str(rfp["fecha_subida"]))
+                cols[2].markdown(rfp["fecha_obj"].strftime("%d/%m/%Y %H:%M"))
 
                 if cols[3].button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
                     st.session_state["current_page"] = "Detalle RFP"
