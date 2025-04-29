@@ -469,7 +469,7 @@ if st.session_state["logged_in"]:
                             st.text_area("Contenido", value=contenido, height=200, key=f"contenido_{doc_id}")
                             st.markdown(f"**Fecha de creación:** {fecha_creacion}")
 
-                            col1, col2 = st.columns(2)
+                            col1, col2, col3 = st.columns(3)
                             with col1:
                                 if st.button("💾 Actualizar", key=f"actualizar_{doc_id}"):
                                     actualizar_documento_usuario(doc_id, st.session_state[f"titulo_{doc_id}"], st.session_state[f"contenido_{doc_id}"], user_id)
@@ -482,6 +482,15 @@ if st.session_state["logged_in"]:
                                     st.session_state["analysis_cache"].pop(nombre_subcategoria, None)
                                     st.success("Documento eliminado correctamente.")
                                     st.rerun()
+                            with col3:
+                                pdf_buffer = generate_pdf(st.session_state[f"contenido_{doc_id}"]) 
+
+                                st.download_button(
+                                    label="Descargar como PDF",
+                                    data=pdf_buffer.getvalue(),
+                                    file_name=f"{st.session_state[f"titulo_{doc_id}"]} generado con IA.pdf",
+                                    mime="application/pdf"
+                                )
 
             else:
                 st.info("No hay documentos en esta subcategoría.")
