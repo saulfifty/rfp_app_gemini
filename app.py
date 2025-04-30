@@ -285,13 +285,13 @@ if st.session_state["logged_in"]:
             headers = ["Nombre del archivo", "Cliente", "Fecha de subida", "Acciones"]
             cols = st.columns([4, 2, 2, 1])
             for i, h in enumerate(headers):
-                cols[i].markdown(f"**{h}**")
+                cols[i].markdown(f"<h3 style='color: #4A4A4A; font-family: Arial, sans-serif;'>{h}</h3>", unsafe_allow_html=True)
 
             for rfp in rfps_a_mostrar:
                 cols = st.columns([4, 2, 2, 1])
-                cols[0].markdown(rfp["nombre_archivo"])
-                cols[1].markdown(rfp["cliente"])
-                cols[2].markdown(rfp["fecha_obj"].strftime("%d/%m/%Y %H:%M"))
+                cols[0].markdown(f"<p style='color: #4A4A4A; font-family: Arial, sans-serif;'>{rfp['nombre_archivo']}</p>", unsafe_allow_html=True)
+                cols[1].markdown(f"<p style='color: #4A4A4A; font-family: Arial, sans-serif;'>{rfp['cliente']}</p>", unsafe_allow_html=True)
+                cols[2].markdown(f"<p style='color: #4A4A4A; font-family: Arial, sans-serif;'>{rfp['fecha_obj'].strftime("%d/%m/%Y %H:%M")}</p>", unsafe_allow_html=True)
 
                 if cols[3].button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
                     st.session_state["current_page"] = "Detalle RFP"
@@ -301,7 +301,7 @@ if st.session_state["logged_in"]:
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
                 if st.button("⬇️ Mostrar más"):
                     st.session_state["rfps_visible"] += 5
-                    st.rerun()
+                    st.rerun()        
         else:
             st.info("No se encontraron RFPs que coincidan con los filtros.")
     
