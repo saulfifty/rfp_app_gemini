@@ -295,10 +295,13 @@ if st.session_state["logged_in"]:
 
                 cols[3].markdown(f"<div style='display: flex; align-items: center; justify-content: center; height: 100%;'><button style='font-family: Arial, sans-serif; font-size: 14px;'>{rfp['nombre_archivo']}</button></div>", unsafe_allow_html=True)
                 
-                if cols[3].button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
-                    st.session_state["current_page"] = "Detalle RFP"
-                    st.session_state["selected_rfp_id"] = rfp["id"]
-                    st.rerun()
+                with cols[3]:
+                    st.markdown("<div style='display: flex; align-items: center; justify-content: center; height: 100%;'>", unsafe_allow_html=True)
+                    if st.button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
+                        st.session_state["current_page"] = "Detalle RFP"
+                        st.session_state["selected_rfp_id"] = rfp["id"]
+                        st.rerun()
+                    st.markdown("</div>", unsafe_allow_html=True)
 
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
                 if st.button("⬇️ Mostrar más"):
