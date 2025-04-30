@@ -301,9 +301,9 @@ if st.session_state["logged_in"]:
 
             for rfp in rfps_a_mostrar:
                 cols = st.columns([4, 2, 2, 1])
-                cols[0].markdown(f"<p style='color: {text_color}; font-family: Arial, sans-serif;'>{rfp['nombre_archivo']}</p>", unsafe_allow_html=True)
-                cols[1].markdown(f"<p style='color: {text_color}; font-family: Arial, sans-serif;'>{rfp['cliente']}</p>", unsafe_allow_html=True)
-                cols[2].markdown(f"<p style='color: {text_color}; font-family: Arial, sans-serif;'>{rfp['fecha_obj'].strftime("%d/%m/%Y %H:%M")}</p>", unsafe_allow_html=True)
+                cols[0].markdown(f"<p style='font-family: Arial, sans-serif;'>{rfp['nombre_archivo']}</p>", unsafe_allow_html=True)
+                cols[1].markdown(f"<p style='font-family: Arial, sans-serif;'>{rfp['cliente']}</p>", unsafe_allow_html=True)
+                cols[2].markdown(f"<p style='font-family: Arial, sans-serif;'>{rfp['fecha_obj'].strftime("%d/%m/%Y %H:%M")}</p>", unsafe_allow_html=True)
 
                 if cols[3].button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
                     st.session_state["current_page"] = "Detalle RFP"
