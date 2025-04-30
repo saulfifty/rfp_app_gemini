@@ -283,12 +283,12 @@ if st.session_state["logged_in"]:
             rfps_a_mostrar = rfps_filtradas[:st.session_state["rfps_visible"]]
 
             headers = ["Nombre del archivo", "Cliente", "Fecha de subida", "Acciones"]
-            cols = st.columns([4, 2, 3, 2])
+            cols = st.columns([4, 2, 2, 2])
             for i, h in enumerate(headers):
                 cols[i].markdown(f"<h3 style='font-family: Arial, sans-serif;'>{h}</h3>", unsafe_allow_html=True)
 
             for rfp in rfps_a_mostrar:
-                cols = st.columns([4, 2, 2, 1])
+                cols = st.columns([4, 2, 2, 2])
                 cols[0].markdown(f"<p style='font-family: Arial, sans-serif;'>{rfp['nombre_archivo']}</p>", unsafe_allow_html=True)
                 cols[1].markdown(f"<p style='font-family: Arial, sans-serif;'>{rfp['cliente']}</p>", unsafe_allow_html=True)
                 cols[2].markdown(f"<p style='font-family: Arial, sans-serif;'>{rfp['fecha_obj'].strftime("%d/%m/%Y %H:%M")}</p>", unsafe_allow_html=True)
