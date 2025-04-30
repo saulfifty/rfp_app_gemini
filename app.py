@@ -283,12 +283,15 @@ if st.session_state["logged_in"]:
             rfps_a_mostrar = rfps_filtradas[:st.session_state["rfps_visible"]]
             
             theme = st.get_option("theme.base")
+            st.write("Tema actual:", theme)
             if theme == "dark":
                 header_color = "#FFFFFF"
                 text_color = "#FFFFFF"
+                bg_color = "#333333"
             else:
                 header_color = "#4A4A4A"
                 text_color = "#4A4A4A"
+                bg_color = "#FFFFFF"
 
             headers = ["Nombre del archivo", "Cliente", "Fecha de subida", "Acciones"]
             cols = st.columns([4, 2, 2, 1])
