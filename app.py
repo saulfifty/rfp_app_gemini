@@ -284,10 +284,18 @@ if st.session_state["logged_in"]:
             
             st.markdown("""
                 <script>
-                const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    const theme = isDarkMode ? 'dark' : 'light';
-                    document.body.setAttribute('data-theme', theme);
-                    window.parent.postMessage(theme, '*');
+                const localTheme = localStorage.getItem("theme");
+                let theme;
+                if (localTheme) {
+                    theme = localTheme;
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    theme = "dark";
+                } else {
+                    theme = "light";
+                }
+                document.body.setAttribute('data-theme', theme);
+                window.parent.postMessage(theme, '*')
+                ;
                 </script>
             """, unsafe_allow_html=True)
 
