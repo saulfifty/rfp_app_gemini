@@ -281,17 +281,25 @@ if st.session_state["logged_in"]:
                 st.session_state["rfps_visible"] = 5
 
             rfps_a_mostrar = rfps_filtradas[:st.session_state["rfps_visible"]]
+            
+            theme = st.get_option("theme.base")
+            if theme == "dark":
+                header_color = "#FFFFFF"
+                text_color = "#FFFFFF"
+            else:
+                header_color = "#4A4A4A"
+                text_color = "#4A4A4A"
 
             headers = ["Nombre del archivo", "Cliente", "Fecha de subida", "Acciones"]
             cols = st.columns([4, 2, 2, 1])
             for i, h in enumerate(headers):
-                cols[i].markdown(f"<h3 style='color: #4A4A4A; font-family: Arial, sans-serif;'>{h}</h3>", unsafe_allow_html=True)
+                cols[i].markdown(f"<h3 style='color: {header_color}; font-family: Arial, sans-serif;'>{h}</h3>", unsafe_allow_html=True)
 
             for rfp in rfps_a_mostrar:
                 cols = st.columns([4, 2, 2, 1])
-                cols[0].markdown(f"<p style='color: #4A4A4A; font-family: Arial, sans-serif;'>{rfp['nombre_archivo']}</p>", unsafe_allow_html=True)
-                cols[1].markdown(f"<p style='color: #4A4A4A; font-family: Arial, sans-serif;'>{rfp['cliente']}</p>", unsafe_allow_html=True)
-                cols[2].markdown(f"<p style='color: #4A4A4A; font-family: Arial, sans-serif;'>{rfp['fecha_obj'].strftime("%d/%m/%Y %H:%M")}</p>", unsafe_allow_html=True)
+                cols[0].markdown(f"<p style='color: {text_color}; font-family: Arial, sans-serif;'>{rfp['nombre_archivo']}</p>", unsafe_allow_html=True)
+                cols[1].markdown(f"<p style='color: {text_color}; font-family: Arial, sans-serif;'>{rfp['cliente']}</p>", unsafe_allow_html=True)
+                cols[2].markdown(f"<p style='color: {text_color}; font-family: Arial, sans-serif;'>{rfp['fecha_obj'].strftime("%d/%m/%Y %H:%M")}</p>", unsafe_allow_html=True)
 
                 if cols[3].button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
                     st.session_state["current_page"] = "Detalle RFP"
