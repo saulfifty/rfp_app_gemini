@@ -283,7 +283,7 @@ if st.session_state["logged_in"]:
             rfps_a_mostrar = rfps_filtradas[:st.session_state["rfps_visible"]]
 
             headers = ["Nombre del archivo", "Cliente", "Fecha de subida", "Acciones"]
-            cols = st.columns([4, 2, 2, 1])
+            cols = st.columns([4, 2, 3, 2])
             for i, h in enumerate(headers):
                 cols[i].markdown(f"<h3 style='font-family: Arial, sans-serif;'>{h}</h3>", unsafe_allow_html=True)
 
