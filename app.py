@@ -283,6 +283,8 @@ if st.session_state["logged_in"]:
             rfps_a_mostrar = rfps_filtradas[:st.session_state["rfps_visible"]]
             
             theme = st.get_option("theme.base")
+            st.write("Theme actual:", theme)
+            st.write("theme.primaryColor:", st.get_option("theme.primaryColor"))
             if theme == "dark" or (theme == "auto" and st.get_option("theme.primaryColor") == "#FFFFFF"):
                 header_color = "#FFFFFF"
                 text_color = "#FFFFFF"
