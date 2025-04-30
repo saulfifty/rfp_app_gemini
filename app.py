@@ -285,7 +285,7 @@ if st.session_state["logged_in"]:
             headers = ["Nombre del archivo", "Cliente", "Fecha", "Acciones"]
             cols = st.columns([4, 2, 2, 2])
             for i, h in enumerate(headers):
-                cols[i].markdown(f"<h3 style='font-family: Arial, sans-serif; font-size: 16px; text-align: center;'>{h}</h3>", unsafe_allow_html=True)
+                cols[i].markdown(f"<h3 style='font-family: Arial, sans-serif; text-align: center;'>{h}</h3>", unsafe_allow_html=True)
 
             for rfp in rfps_a_mostrar:
                 cols = st.columns([4, 2, 2, 2])
