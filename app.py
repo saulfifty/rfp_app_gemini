@@ -282,10 +282,17 @@ if st.session_state["logged_in"]:
 
             rfps_a_mostrar = rfps_filtradas[:st.session_state["rfps_visible"]]
             
-            theme = st.get_option("theme.base")
+            st.markdown("""
+                <script>
+                    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+                </script>
+            """, unsafe_allow_html=True)
+
+            
+            theme = st.session_state.get("theme", "light")
             st.write("Theme actual:", theme)
-            st.write("theme.primaryColor:", st.get_option("theme.primaryColor"))
-            if theme == "dark" or (theme == "auto" and st.get_option("theme.primaryColor") == "#FFFFFF"):
+            if theme == "dark":
                 header_color = "#FFFFFF"
                 text_color = "#FFFFFF"
                 bg_color = "#333333"
@@ -301,9 +308,9 @@ if st.session_state["logged_in"]:
 
             for rfp in rfps_a_mostrar:
                 cols = st.columns([4, 2, 2, 1])
-                cols[0].markdown(f"<p style='font-family: Arial, sans-serif;'>{rfp['nombre_archivo']}</p>", unsafe_allow_html=True)
-                cols[1].markdown(f"<p style='font-family: Arial, sans-serif;'>{rfp['cliente']}</p>", unsafe_allow_html=True)
-                cols[2].markdown(f"<p style='font-family: Arial, sans-serif;'>{rfp['fecha_obj'].strftime("%d/%m/%Y %H:%M")}</p>", unsafe_allow_html=True)
+                cols[0].markdown(f"<p style='color: {text_color}; font-family: Arial, sans-serif;'>{rfp['nombre_archivo']}</p>", unsafe_allow_html=True)
+                cols[1].markdown(f"<p style='color: {text_color}; font-family: Arial, sans-serif;'>{rfp['cliente']}</p>", unsafe_allow_html=True)
+                cols[2].markdown(f"<p style='color: {text_color}; font-family: Arial, sans-serif;'>{rfp['fecha_obj'].strftime("%d/%m/%Y %H:%M")}</p>", unsafe_allow_html=True)
 
                 if cols[3].button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
                     st.session_state["current_page"] = "Detalle RFP"
