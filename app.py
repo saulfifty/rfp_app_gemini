@@ -284,8 +284,10 @@ if st.session_state["logged_in"]:
             
             st.markdown("""
                 <script>
-                    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+                const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    const theme = isDarkMode ? 'dark' : 'light';
+                    document.body.setAttribute('data-theme', theme);
+                    window.parent.postMessage(theme, '*');
                 </script>
             """, unsafe_allow_html=True)
 
