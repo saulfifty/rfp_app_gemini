@@ -294,7 +294,7 @@ if st.session_state["logged_in"]:
                 cols[2].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{rfp['fecha_obj'].strftime("%d/%m/%Y %H:%M")}</p>", unsafe_allow_html=True)
                 
                 with cols[3]:
-                    st.markdown("<div style='display: flex; justify-content: center; height: 100%;'>", unsafe_allow_html=True)
+                    st.markdown("<div style='display: flex; height: 100%;'>", unsafe_allow_html=True)
                     if st.button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
                         st.session_state["current_page"] = "Detalle RFP"
                         st.session_state["selected_rfp_id"] = rfp["id"]
