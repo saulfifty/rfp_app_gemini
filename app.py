@@ -283,20 +283,65 @@ if st.session_state["logged_in"]:
             rfps_a_mostrar = rfps_filtradas[:st.session_state["rfps_visible"]]
 
             headers = ["Nombre del archivo", "Cliente", "Fecha de subida", "Acciones"]
-            cols = st.columns([4, 2, 2, 1])
-            for i, h in enumerate(headers):
-                cols[i].markdown(f"**{h}**")
+            
+            # Estilo CSS para la tabla
+            st.markdown("""
+                <style>
+                .table-container {
+                    border-collapse: collapse;
+                    width: 100%;
+                    margin: 20px 0;
+                    font-size: 18px;
+                    text-align: left;
+                }
+                .table-container th, .table-container td {
+                    padding: 12px 15px;
+                    border: 1px solid #ddd;
+                }
+                .table-container th {
+                    background-color: #f2f2f2;
+                    font-weight: bold;
+                }
+                .table-container tr:nth-child(even) {
+                    background-color: #f9f9f9;
+                }
+                .table-container tr:hover {
+                    background-color: #f1f1f1;
+                }
+                .table-container td button {
+                    background-color: #4CAF50;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    text-align: center;
+                    text-decoration: none;
+                    display: inline-block;
+                    font-size: 16px;
+                    margin: 4px 2px;
+                    cursor: pointer;
+                    border-radius: 4px;
+                }
+                </style>
+            """, unsafe_allow_html=True)
 
+            # Crear la tabla
+            st.markdown('<table class="table-container">', unsafe_allow_html=True)
+            st.markdown('<tr>', unsafe_allow_html=True)
+            for h in headers:
+                st.markdown(f'<th>{h}</th>', unsafe_allow_html=True)
+            st.markdown('</tr>', unsafe_allow_html=True)
+
+            # Añadir las filas de datos
             for rfp in rfps_a_mostrar:
-                cols = st.columns([4, 2, 2, 1])
-                cols[0].markdown(rfp["nombre_archivo"])
-                cols[1].markdown(rfp["cliente"])
-                cols[2].markdown(rfp["fecha_obj"].strftime("%d/%m/%Y %H:%M"))
+                st.markdown('<tr>', unsafe_allow_html=True)
+                st.markdown(f'<td>{rfp["nombre_archivo"]}</td>', unsafe_allow_html=True)
+                st.markdown(f'<td>{rfp["cliente"]}</td>', unsafe_allow_html=True)
+                st.markdown(f'<td>{rfp["fecha_obj"].strftime("%d/%m/%Y %H:%M")}</td>', unsafe_allow_html=True)
+                st.markdown(f'<td><button onclick="window.location.href=\'#\'">📄 Ver</button></td>', unsafe_allow_html=True)
+                st.markdown('</tr>', unsafe_allow_html=True)
 
-                if cols[3].button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
-                    st.session_state["current_page"] = "Detalle RFP"
-                    st.session_state["selected_rfp_id"] = rfp["id"]
-                    st.rerun()
+            st.markdown('</table>', unsafe_allow_html=True)
+
 
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
                 if st.button("⬇️ Mostrar más"):
