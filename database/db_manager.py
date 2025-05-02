@@ -43,7 +43,7 @@ def login(email, password):
             return None
     except Exception as e:
         #st.error("Excepción durante login:")
-        #st.exception(e)
+        st.exception(e)
         return None
 
 def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id, refresh_token):
