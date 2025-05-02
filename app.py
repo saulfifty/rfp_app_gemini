@@ -644,16 +644,20 @@ else:
         st.subheader("Inicio de Sesión")
         email = st.text_input("Correo Electrónico")
         password = st.text_input("Contraseña", type="password")
-        if st.button("Iniciar Sesión"):
-            response = login(email, password)
-            if response:
-                st.session_state["logged_in"] = True
-                st.session_state["user"] = {
-                    "id": response.user.id,
-                    "email": response.user.email,
-                    "access_token": response.session.access_token,
-                    "refresh_token": response.session.refresh_token,
-                }
-                st.rerun()
-            else:
-                st.error("Correo electrónico o contraseña incorrectos.")
+        try:
+            if st.button("Iniciar Sesión"):
+                response = login(email, password)
+                if response:
+                    st.session_state["logged_in"] = True
+                    st.session_state["user"] = {
+                        "id": response.user.id,
+                        "email": response.user.email,
+                        "access_token": response.session.access_token,
+                        "refresh_token": response.session.refresh_token,
+                    }
+                    st.rerun()
+                else:
+                    st.error("Correo electrónico o contraseña incorrectos.")
+        except Exception as e:
+            st.error("Error al iniciar sesión. Por favor, intenta de nuevo más tarde.")
+            st.exception(e)
