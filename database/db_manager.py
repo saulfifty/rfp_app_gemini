@@ -42,8 +42,8 @@ def login(email, password):
             st.error("No se pudo iniciar sesión. ¿Quizás tu correo no está verificado?")
             return None
     except Exception as e:
-        st.error("Excepción durante login:")
-        st.exception(e)
+        #st.error("Excepción durante login:")
+        #st.exception(e)
         return None
 
 def guardar_rfp(nombre_archivo, contenido, cliente, access_token, user_id, refresh_token):
