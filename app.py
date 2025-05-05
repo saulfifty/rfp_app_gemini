@@ -319,6 +319,10 @@ if st.session_state["logged_in"]:
                     st.session_state["selected_rfp_id"] = rfp["id"]
                     st.rerun()
 
+                if cols[3].button("✅ Seleccionar", key=f"seleccionar_rfp_{rfp['id']}"):
+                    st.session_state["selected_rfp"] = rfp
+                    st.success(f"RFP '{rfp['nombre_archivo']}' seleccionada.")
+
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
                 if st.button("⬇️ Mostrar más"):
                     st.session_state["rfps_visible"] += 5
