@@ -294,27 +294,6 @@ if st.session_state["logged_in"]:
                 cols[2].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{rfp['fecha_obj'].strftime("%d/%m/%Y %H:%M")}</p>", unsafe_allow_html=True)
                 
                 if cols[3].button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
-                    st.markdown("""
-                        <style>
-                        .stButton button {
-                            background-color: #4CAF50;
-                            color: white;
-                            border: none;
-                            padding: 10px 20px;
-                            text-align: center;
-                            text-decoration: none;
-                            display: inline-block;
-                            font-size: 16px;
-                            margin: 4px 2px;
-                            cursor: pointer;
-                            border-radius: 8px;
-                            transition: background-color 0.3s ease;
-                        }
-                        .stButton button:hover {
-                            background-color: #45a049;
-                        }
-                        </style>
-                    """, unsafe_allow_html=True)
                     st.session_state["current_page"] = "Detalle RFP"
                     st.session_state["selected_rfp_id"] = rfp["id"]
                     st.rerun()
