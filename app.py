@@ -158,7 +158,7 @@ if st.session_state["logged_in"]:
     
     # Contenido de la página actual
     if st.session_state["current_page"] == "Cargar RFP":
-        st.subheader("Subir y Analizar RFP")
+        st.subheader("Subir RFP")
         
         client_name = st.text_input("Nombre del cliente")
 
@@ -299,8 +299,8 @@ if st.session_state["logged_in"]:
                     st.rerun()
 
                 if cols[3].button("✅ Seleccionar", key=f"seleccionar_rfp_{rfp['id']}"):
-                    st.session_state["selected_rfp"] = rfp
-                    st.success(f"RFP '{rfp['nombre_archivo']}' seleccionada.")
+                    st.session_state["rfp_text"] = rfp
+                    st.toast(f"RFP '{rfp['nombre_archivo']}' seleccionada.", icon="✅")
 
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
                 if st.button("⬇️ Mostrar más"):
