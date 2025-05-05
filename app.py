@@ -293,14 +293,15 @@ if st.session_state["logged_in"]:
                 cols[1].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{rfp['cliente']}</p>", unsafe_allow_html=True)
                 cols[2].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{rfp['fecha_obj'].strftime("%d/%m/%Y %H:%M")}</p>", unsafe_allow_html=True)
                 
-                if cols[3].button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
-                    st.session_state["current_page"] = "Detalle RFP"
-                    st.session_state["selected_rfp_id"] = rfp["id"]
-                    st.rerun()
+                with cols[3]:
+                    if st.button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
+                        st.session_state["current_page"] = "Detalle RFP"
+                        st.session_state["selected_rfp_id"] = rfp["id"]
+                        st.rerun()
 
-                if cols[3].button("✅ Seleccionar", key=f"seleccionar_rfp_{rfp['id']}"):
-                    st.session_state["rfp_text"] = clean_text(rfp["contenido"])
-                    st.toast(f"RFP '{rfp['nombre_archivo']}' seleccionada.", icon="✅")
+                    if st.button("✅ Seleccionar", key=f"seleccionar_rfp_{rfp['id']}"):
+                        st.session_state["rfp_text"] = clean_text(rfp["contenido"])
+                        st.toast(f"RFP '{rfp['nombre_archivo']}' seleccionada.", icon="✅")
 
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
                 if st.button("⬇️ Mostrar más"):
