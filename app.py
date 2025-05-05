@@ -299,7 +299,7 @@ if st.session_state["logged_in"]:
                     st.rerun()
 
                 if cols[3].button("✅ Seleccionar", key=f"seleccionar_rfp_{rfp['id']}"):
-                    st.session_state["rfp_text"] = rfp
+                    st.session_state["rfp_text"] = clean_text(rfp["contenido"])
                     st.toast(f"RFP '{rfp['nombre_archivo']}' seleccionada.", icon="✅")
 
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
