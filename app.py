@@ -255,42 +255,29 @@ if st.session_state["logged_in"]:
             # Eliminar la columna fecha_obj ya que no se necesita en la tabla
             df_rfps = df_rfps.drop(columns=['fecha_obj'])
 
-            # Agregar columnas de botones "Ver" y "Seleccionar" al DataFrame
-            df_rfps['ver'] = df_rfps.apply(
-                lambda rfp: st.button(
-                    "📄 Ver", 
-                    key=f"ver_rfp_{rfp['id']}", 
-                    on_click=lambda: (
-                        setattr(st.session_state, "current_page", "Detalle RFP"),
-                        setattr(st.session_state, "selected_rfp_id", rfp["id"]),
-                        st.rerun()
-                    )
-                ), 
-                axis=1
-            )
-
-            df_rfps['seleccionar'] = df_rfps.apply(
-                lambda rfp: st.button(
-                    "✅ Seleccionar", 
-                    key=f"seleccionar_rfp_{rfp['id']}", 
-                    on_click=lambda: (
-                        setattr(st.session_state, "rfp_text", clean_text(rfp["contenido"])),
-                        st.toast(f"RFP '{rfp['nombre_archivo']}' seleccionada.", icon="✅")
-                    )
-                ), 
-                axis=1
-            )
-
-            # Mostrar la tabla de RFPs con las nuevas columnas
+            # Mostrar la tabla de RFPs
             st.write("### Lista de RFPs con Acciones")
-            st.dataframe(df_rfps[['nombre_archivo', 'cliente', 'fecha', 'ver', 'seleccionar']], width=800)
+            st.dataframe(df_rfps[['nombre_archivo', 'cliente', 'fecha']], width=800)
 
-            if st.session_state["rfps_visible"] < len(rfps_filtradas):
-                if st.button("⬇️ Mostrar más"):
-                    st.session_state["rfps_visible"] += 5
-                    st.rerun()        
-        else:
-            st.info("No se encontraron RFPs que coincidan con los filtros.")
+            # Agregar botones "Ver" y "Seleccionar" para cada RFP
+            for rfp in rfps_a_mostrar:
+                cols = st.columns([4, 2])
+                with cols[0]:
+                    if st.button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
+                        st.session_state["current_page"] = "Detalle RFP"
+                        st.session_state["selected_rfp_id"] = rfp["id"]
+                        st.rerun()
+                with cols[1]:
+                    if st.button("✅ Seleccionar", key=f"seleccionar_rfp_{rfp['id']}"):
+                        st.session_state["rfp_text"] = clean_text(rfp["contenido"])
+                        st.toast(f"RFP '{rfp['nombre_archivo']}' seleccionada.", icon="✅")
+
+                        if st.session_state["rfps_visible"] < len(rfps_filtradas):
+                            if st.button("⬇️ Mostrar más"):
+                                st.session_state["rfps_visible"] += 5
+                                st.rerun()        
+                    else:
+                        st.info("No se encontraron RFPs que coincidan con los filtros.")
     
     elif st.session_state["current_page"] == "Detalle RFP":
         rfp_id = st.session_state.get("selected_rfp_id")
