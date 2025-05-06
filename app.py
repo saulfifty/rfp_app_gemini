@@ -259,7 +259,7 @@ if st.session_state["logged_in"]:
             st.markdown("<h2 style='font-family: Arial, sans-serif; text-align: center; color: #4A90E2;'>Lista de RFPs con Acciones</h2>", unsafe_allow_html=True)
 
             # Encabezados de las columnas con diseño
-            cols = st.columns([4, 2, 2, 3])  # Ajustar el ancho de las columnas
+            cols = st.columns([4, 2, 2, 4])  # Ajustar el ancho de las columnas
             cols[0].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Nombre archivo</h4>", unsafe_allow_html=True)
             cols[1].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Cliente</h4>", unsafe_allow_html=True)
             cols[2].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Fecha</h4>", unsafe_allow_html=True)
@@ -267,7 +267,7 @@ if st.session_state["logged_in"]:
 
             # Agregar filas con los datos y botones para las acciones
             for index, row in df_rfps.iterrows():
-                cols = st.columns([4, 2, 2, 3])  # Ajustar el ancho de las columnas
+                cols = st.columns([4, 2, 2, 4])  # Ajustar el ancho de las columnas
                 cols[0].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['nombre_archivo']}</p>", unsafe_allow_html=True)
                 cols[1].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['cliente']}</p>", unsafe_allow_html=True)
                 cols[2].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['fecha']}</p>", unsafe_allow_html=True)
