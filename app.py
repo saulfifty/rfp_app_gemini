@@ -376,7 +376,7 @@ if st.session_state["logged_in"]:
                     font-weight: bold;
                     margin-top: 10px;
                     margin-bottom: 10px;
-                    color: inherit;
+                    color: #4A90E2;
                 }
                 .contenedor-ficha {
                     border: 1px solid rgba(0,0,0,0.2);
