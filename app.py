@@ -1,6 +1,7 @@
 import streamlit as st
 import time
 import os
+import pandas as pd
 from datetime import datetime
 from utils.pdf_extractor import (extract_text_from_pdf, generate_pdf, clean_text)
 from database.db_manager import (registrar_usuario, login, obtener_documentos_por_rfp_y_usuario,
@@ -245,26 +246,33 @@ if st.session_state["logged_in"]:
 
             rfps_a_mostrar = rfps_filtradas[:st.session_state["rfps_visible"]]
 
-            headers = ["Nombre del archivo", "Cliente", "Fecha", "Acciones"]
-            cols = st.columns([4, 2, 2, 2])
-            for i, h in enumerate(headers):
-                cols[i].markdown(f"<h3 style='font-family: Arial, sans-serif; text-align: center;'>{h}</h3>", unsafe_allow_html=True)
+            
+            # Crear un DataFrame para mostrar las RFPs en una tabla
+            df_rfps = pd.DataFrame(rfps_a_mostrar)
 
-            for rfp in rfps_a_mostrar:
-                cols = st.columns([4, 2, 2, 2])
-                cols[0].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{rfp['nombre_archivo']}</p>", unsafe_allow_html=True)
-                cols[1].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{rfp['cliente']}</p>", unsafe_allow_html=True)
-                cols[2].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{rfp['fecha_obj'].strftime("%d/%m/%Y %H:%M")}</p>", unsafe_allow_html=True)
-                
-                with cols[3]:
+            # Convertir la columna de fecha a formato de cadena
+            df_rfps['fecha'] = df_rfps['fecha_obj'].dt.strftime("%d/%m/%Y %H:%M")
+
+            # Eliminar la columna fecha_obj ya que no se necesita en la tabla
+            df_rfps = df_rfps.drop(columns=['fecha_obj'])
+
+            # Mostrar la tabla de RFPs
+            st.write("### Lista de RFPs")
+            st.dataframe(df_rfps[['nombre_archivo', 'cliente', 'fecha']], width=800)
+
+            # Agregar botones de acción para cada RFP
+            for index, rfp in df_rfps.iterrows():
+                col1, col2 = st.columns([1, 1])
+                with col1:
                     if st.button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
                         st.session_state["current_page"] = "Detalle RFP"
                         st.session_state["selected_rfp_id"] = rfp["id"]
                         st.rerun()
-
+                with col2:
                     if st.button("✅ Seleccionar", key=f"seleccionar_rfp_{rfp['id']}"):
                         st.session_state["rfp_text"] = clean_text(rfp["contenido"])
                         st.toast(f"RFP '{rfp['nombre_archivo']}' seleccionada.", icon="✅")
+
 
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
                 if st.button("⬇️ Mostrar más"):
