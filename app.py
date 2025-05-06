@@ -257,6 +257,7 @@ if st.session_state["logged_in"]:
             df_rfps = df_rfps.drop(columns=['fecha_obj'])
 
             
+            
             # Crear la tabla con botones
             st.write("### Lista de RFPs")
             table_html = """
@@ -278,8 +279,8 @@ if st.session_state["logged_in"]:
                         <td style='text-align: center;'>{rfp['cliente']}</td>
                         <td style='text-align: center;'>{rfp['fecha']}</td>
                         <td style='text-align: center;'>
-                            <button onclick="window.location.href='?ver_rfp_{rfp['id']}'">📄 Ver</button>
-                            <button onclick="window.location.href='?seleccionar_rfp_{rfp['id']}'">✅ Seleccionar</button>
+                            <a href='?ver_rfp_{rfp['id']}'><button>📄 Ver</button></a>
+                            <a href='?seleccionar_rfp_{rfp['id']}'><button>✅ Seleccionar</button></a>
                         </td>
                     </tr>
                 """
@@ -292,13 +293,15 @@ if st.session_state["logged_in"]:
 
             # Manejar las acciones de los botones
             for index, rfp in df_rfps.iterrows():
-                if f"ver_rfp_{rfp['id']}" in st.experimental_get_query_params():
+                query_params = st.experimental_get_query_params()
+                if f"ver_rfp_{rfp['id']}" in query_params:
                     st.session_state["current_page"] = "Detalle RFP"
                     st.session_state["selected_rfp_id"] = rfp["id"]
                     st.rerun()
-                if f"seleccionar_rfp_{rfp['id']}" in st.experimental_get_query_params():
+                if f"seleccionar_rfp_{rfp['id']}" in query_params:
                     st.session_state["rfp_text"] = clean_text(rfp["contenido"])
                     st.toast(f"RFP '{rfp['nombre_archivo']}' seleccionada.", icon="✅")
+
 
 
 
