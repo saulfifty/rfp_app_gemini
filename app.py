@@ -258,7 +258,7 @@ if st.session_state["logged_in"]:
 
             # Mostrar la tabla de RFPs
             st.write("### Lista de RFPs")
-            st.dataframe(df_rfps[['Nombre del archivo', 'Cliente', 'Fecha']], width=800)
+            st.dataframe(df_rfps[['nombre_archivo', 'cliente', 'fecha']], width=800)
 
             # Agregar botones de acción para cada RFP
             
