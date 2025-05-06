@@ -274,12 +274,12 @@ if st.session_state["logged_in"]:
 
                 # Botones para "Ver" y "Seleccionar" en la misma columna
                 with cols[3]:
-                    if st.button("🔍 Ver", key=f"ver_rfp_{index}"):
+                    if st.button("🔍 ", key=f"ver_rfp_{index}"):
                         st.session_state["current_page"] = "Detalle RFP"
                         st.session_state["selected_rfp_id"] = rfps_a_mostrar[index]["id"]
                         st.rerun()
 
-                    if st.button("📄 Seleccionar", key=f"seleccionar_rfp_{index}"):
+                    if st.button("📄 ", key=f"seleccionar_rfp_{index}"):
                         st.session_state["rfp_text"] = clean_text(rfps_a_mostrar[index]["contenido"])
                         st.toast(f"<span style='font-family: Arial, sans-serif; font-size: 14px;'>RFP '{row['nombre_archivo']}' seleccionada.</span>", icon="📄")
                     
