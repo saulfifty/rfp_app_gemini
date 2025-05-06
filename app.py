@@ -256,26 +256,50 @@ if st.session_state["logged_in"]:
             # Eliminar la columna fecha_obj ya que no se necesita en la tabla
             df_rfps = df_rfps.drop(columns=['fecha_obj'])
 
-            # Mostrar la tabla de RFPs
-            st.write("### Lista de RFPs")
-            st.dataframe(df_rfps[['nombre_archivo', 'cliente', 'fecha']], width=800)
-
-            # Agregar botones de acción para cada RFP
             
+            # Crear la tabla con botones
+            st.write("### Lista de RFPs")
+            table_html = """
+            <table style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Nombre del archivo</th>
+                        <th>Cliente</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+            """
             for index, rfp in df_rfps.iterrows():
-                cols = st.columns([4, 2, 2, 2])
-                cols[0].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{rfp['nombre_archivo']}</p>", unsafe_allow_html=True)
-                cols[1].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{rfp['cliente']}</p>", unsafe_allow_html=True)
-                cols[2].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{rfp['fecha']}</p>", unsafe_allow_html=True)
-                
-                with cols[3]:
-                    if st.button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
-                        st.session_state["current_page"] = "Detalle RFP"
-                        st.session_state["selected_rfp_id"] = rfp["id"]
-                        st.rerun()
-                    if st.button("✅ Seleccionar", key=f"seleccionar_rfp_{rfp['id']}"):
-                        st.session_state["rfp_text"] = clean_text(rfp["contenido"])
-                        st.toast(f"RFP '{rfp['nombre_archivo']}' seleccionada.", icon="✅")
+                table_html += f"""
+                    <tr>
+                        <td style='text-align: center;'>{rfp['nombre_archivo']}</td>
+                        <td style='text-align: center;'>{rfp['cliente']}</td>
+                        <td style='text-align: center;'>{rfp['fecha']}</td>
+                        <td style='text-align: center;'>
+                            <button onclick="window.location.href='?ver_rfp_{rfp['id']}'">📄 Ver</button>
+                            <button onclick="window.location.href='?seleccionar_rfp_{rfp['id']}'">✅ Seleccionar</button>
+                        </td>
+                    </tr>
+                """
+            table_html += """
+                </tbody>
+            </table>
+            """
+
+            st.markdown(table_html, unsafe_allow_html=True)
+
+            # Manejar las acciones de los botones
+            for index, rfp in df_rfps.iterrows():
+                if f"ver_rfp_{rfp['id']}" in st.experimental_get_query_params():
+                    st.session_state["current_page"] = "Detalle RFP"
+                    st.session_state["selected_rfp_id"] = rfp["id"]
+                    st.rerun()
+                if f"seleccionar_rfp_{rfp['id']}" in st.experimental_get_query_params():
+                    st.session_state["rfp_text"] = clean_text(rfp["contenido"])
+                    st.toast(f"RFP '{rfp['nombre_archivo']}' seleccionada.", icon="✅")
+
 
 
 
