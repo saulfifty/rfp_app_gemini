@@ -285,7 +285,7 @@ if st.session_state["logged_in"]:
                     st.rerun()
                 
                 # Columna 3: Acciones
-                if cols[3].button("📄", key=f"seleccionar_rfp_{index}", help="Seleccionar RFP"):
+                if cols[3].button("    📄", key=f"seleccionar_rfp_{index}", help="Seleccionar RFP"):
                     st.session_state["rfp_text"] = clean_text(rfps_a_mostrar[index]["contenido"])
                     st.toast(f"RFP '{row['nombre_archivo']}' seleccionada.", icon="📄")
                     
