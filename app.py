@@ -246,65 +246,26 @@ if st.session_state["logged_in"]:
 
             rfps_a_mostrar = rfps_filtradas[:st.session_state["rfps_visible"]]
 
-            
-            # Crear un DataFrame para mostrar las RFPs en una tabla
-            df_rfps = pd.DataFrame(rfps_a_mostrar)
+            headers = ["Nombre del archivo", "Cliente", "Fecha", "Acciones"]
+            cols = st.columns([4, 2, 2, 2])
+            for i, h in enumerate(headers):
+                cols[i].markdown(f"<h3 style='font-family: Arial, sans-serif; text-align: center;'>{h}</h3>", unsafe_allow_html=True)
 
-            # Convertir la columna de fecha a formato de cadena
-            df_rfps['fecha'] = df_rfps['fecha_obj'].dt.strftime("%d/%m/%Y %H:%M")
+            for rfp in rfps_a_mostrar:
+                cols = st.columns([4, 2, 2, 2])
+                cols[0].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{rfp['nombre_archivo']}</p>", unsafe_allow_html=True)
+                cols[1].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{rfp['cliente']}</p>", unsafe_allow_html=True)
+                cols[2].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{rfp['fecha_obj'].strftime("%d/%m/%Y %H:%M")}</p>", unsafe_allow_html=True)
+                
+                with cols[3]:
+                    if st.button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
+                        st.session_state["current_page"] = "Detalle RFP"
+                        st.session_state["selected_rfp_id"] = rfp["id"]
+                        st.rerun()
 
-            # Eliminar la columna fecha_obj ya que no se necesita en la tabla
-            df_rfps = df_rfps.drop(columns=['fecha_obj'])
-
-            
-            
-            # Crear la tabla con botones
-            st.write("### Lista de RFPs")
-            table_html = """
-            <table style="width:100%">
-                <thead>
-                    <tr>
-                        <th>Nombre del archivo</th>
-                        <th>Cliente</th>
-                        <th>Fecha</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-            """
-            for index, rfp in df_rfps.iterrows():
-                table_html += f"""
-                    <tr>
-                        <td style='text-align: center;'>{rfp['nombre_archivo']}</td>
-                        <td style='text-align: center;'>{rfp['cliente']}</td>
-                        <td style='text-align: center;'>{rfp['fecha']}</td>
-                        <td style='text-align: center;'>
-                            <a href='?ver_rfp_{rfp['id']}'><button>📄 Ver</button></a>
-                            <a href='?seleccionar_rfp_{rfp['id']}'><button>✅ Seleccionar</button></a>
-                        </td>
-                    </tr>
-                """
-            table_html += """
-                </tbody>
-            </table>
-            """
-
-            st.markdown(table_html, unsafe_allow_html=True)
-
-            # Manejar las acciones de los botones
-            for index, rfp in df_rfps.iterrows():
-                query_params = st.experimental_get_query_params()
-                if f"ver_rfp_{rfp['id']}" in query_params:
-                    st.session_state["current_page"] = "Detalle RFP"
-                    st.session_state["selected_rfp_id"] = rfp["id"]
-                    st.rerun()
-                if f"seleccionar_rfp_{rfp['id']}" in query_params:
-                    st.session_state["rfp_text"] = clean_text(rfp["contenido"])
-                    st.toast(f"RFP '{rfp['nombre_archivo']}' seleccionada.", icon="✅")
-
-
-
-
+                    if st.button("✅ Seleccionar", key=f"seleccionar_rfp_{rfp['id']}"):
+                        st.session_state["rfp_text"] = clean_text(rfp["contenido"])
+                        st.toast(f"RFP '{rfp['nombre_archivo']}' seleccionada.", icon="✅")
 
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
                 if st.button("⬇️ Mostrar más"):
