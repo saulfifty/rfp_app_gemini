@@ -259,30 +259,29 @@ if st.session_state["logged_in"]:
             st.markdown("<h2 style='font-family: Arial, sans-serif; text-align: center; color: #4A90E2;'>Lista de RFPs con Acciones</h2>", unsafe_allow_html=True)
 
             # Encabezados de las columnas con diseño
-            cols = st.columns([4, 2, 2, 2, 3])  # Ajustar el ancho de las columnas
+            cols = st.columns([4, 2, 2, 3])  # Ajustar el ancho de las columnas
             cols[0].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Nombre archivo</h4>", unsafe_allow_html=True)
             cols[1].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Cliente</h4>", unsafe_allow_html=True)
             cols[2].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Fecha</h4>", unsafe_allow_html=True)
-            cols[3].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Ver</h4>", unsafe_allow_html=True)
-            cols[4].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Seleccionar</h4>", unsafe_allow_html=True)
+            cols[3].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Acciones</h4>", unsafe_allow_html=True)
 
             # Agregar filas con los datos y botones para las acciones
             for index, row in df_rfps.iterrows():
-                cols = st.columns([4, 2, 2, 2, 3])  # Ajustar el ancho de las columnas
+                cols = st.columns([4, 2, 2, 3])  # Ajustar el ancho de las columnas
                 cols[0].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['nombre_archivo']}</p>", unsafe_allow_html=True)
                 cols[1].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['cliente']}</p>", unsafe_allow_html=True)
                 cols[2].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['fecha']}</p>", unsafe_allow_html=True)
 
-                # Botón para "Ver" con diseño
-                if cols[3].button("📄 Ver", key=f"ver_rfp_{index}"):
-                    st.session_state["current_page"] = "Detalle RFP"
-                    st.session_state["selected_rfp_id"] = rfps_a_mostrar[index]["id"]
-                    st.rerun()
+                # Botones para "Ver" y "Seleccionar" en la misma columna
+                with cols[3]:
+                    if st.button("🔍 Ver", key=f"ver_rfp_{index}"):
+                        st.session_state["current_page"] = "Detalle RFP"
+                        st.session_state["selected_rfp_id"] = rfps_a_mostrar[index]["id"]
+                        st.rerun()
 
-                # Botón para "Seleccionar" con diseño
-                if cols[4].button("✅ Seleccionar", key=f"seleccionar_rfp_{index}"):
-                    st.session_state["rfp_text"] = clean_text(rfps_a_mostrar[index]["contenido"])
-                    st.toast(f"<span style='font-family: Arial, sans-serif; font-size: 14px; color: #4CAF50;'>RFP '{row['nombre_archivo']}' seleccionada.</span>", icon="✅")
+                    if st.button("📄 Seleccionar", key=f"seleccionar_rfp_{index}"):
+                        st.session_state["rfp_text"] = clean_text(rfps_a_mostrar[index]["contenido"])
+                        st.toast(f"<span style='font-family: Arial, sans-serif; font-size: 14px;'>RFP '{row['nombre_archivo']}' seleccionada.</span>", icon="📄")
                     
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
                 if st.button("⬇️ Mostrar más"):
