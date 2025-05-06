@@ -255,10 +255,16 @@ if st.session_state["logged_in"]:
             # Eliminar la columna fecha_obj ya que no se necesita en la tabla
             df_rfps = df_rfps.drop(columns=['fecha_obj'])
 
-            # Agregar columnas seleccionables para las acciones
+            st.write("### Lista de RFPs con Acciones")
+            cols = st.columns([4, 2, 2, 1, 2])  # Ajustar el ancho de las columnas
+            cols[0].write("Nombre del archivo")
+            cols[1].write("Cliente")
+            cols[2].write("Fecha")
+            cols[3].write("Ver")
+            cols[4].write("Seleccionar")
             
             for index, row in df_rfps.iterrows():
-                cols = st.columns([4, 2, 2, 1, 1])  # Ajustar el ancho de las columnas
+                cols = st.columns([4, 2, 2, 1, 2])
                 cols[0].write(row['nombre_archivo'])
                 cols[1].write(row['cliente'])
                 cols[2].write(row['fecha'])
