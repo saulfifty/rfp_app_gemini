@@ -254,6 +254,8 @@ if st.session_state["logged_in"]:
 
             # Eliminar la columna fecha_obj ya que no se necesita en la tabla
             df_rfps = df_rfps.drop(columns=['fecha_obj'])
+            
+            st.markdown("<h2 style='font-family: Arial, sans-serif; text-align: center; color: #4A90E2;'>Lista de RFPs con Acciones</h2>", unsafe_allow_html=True)
 
             # Encabezados de las columnas con diseño
             cols = st.columns([4, 2, 2, 3])  # Ajustar el ancho de las columnas
