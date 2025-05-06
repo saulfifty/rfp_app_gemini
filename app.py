@@ -262,53 +262,33 @@ if st.session_state["logged_in"]:
             cols[2].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Fecha</h4>", unsafe_allow_html=True)
             cols[3].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Acciones</h4>", unsafe_allow_html=True)
 
-            # Agregar filas con los datos y funcionalidad de selección al hacer clic en la fila
+            # Agregar filas con los datos y funcionalidad de selección al hacer clic en las columnas 0, 1 o 2
             for index, row in df_rfps.iterrows():
-                # Crear una fila con un contenedor que detecte clics
-                row_container = st.container()
-                with row_container:
-                    cols = st.columns([4, 2, 2, 3])  # Ajustar el ancho de las columnas
-                    with cols[0]:
-                        st.markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['nombre_archivo']}</p>", unsafe_allow_html=True)
-                    with cols[1]:
-                        st.markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['cliente']}</p>", unsafe_allow_html=True)
-                    with cols[2]:
-                        st.markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['fecha']}</p>", unsafe_allow_html=True)
-                    
-                    # Columna de acciones
-                    with cols[3]:
-                        if st.button("📄 ", key=f"seleccionar_rfp_{index}", help="Seleccionar RFP"):
-                            st.session_state["rfp_text"] = clean_text(rfps_a_mostrar[index]["contenido"])
-                            st.toast(f"<span style='font-family: Arial, sans-serif; font-size: 14px;'>RFP '{row['nombre_archivo']}' seleccionada.</span>", icon="📄")
-
-                # Aplicar estilo para que la fila sea interactiva
-                row_style = f"""
-                <style>
-                    div[data-testid="stHorizontalBlock"] > div:nth-child({index + 2}) {{
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                        padding: 5px;
-                        border-radius: 5px;
-                        transition: background-color 0.3s ease;
-                    }}
-                    div[data-testid="stHorizontalBlock"] > div:nth-child({index + 2}):hover {{
-                        background-color: rgba(255, 77, 77, 0.1);
-                        cursor: pointer;
-                    }}
-                    div[data-testid="stHorizontalBlock"] > div:nth-child({index + 2}):hover p {{
-                        color: #ff4d4d;
-                    }}
-                </style>
-                """
-                st.markdown(row_style, unsafe_allow_html=True)
-
-                # Detectar clic en la fila (excepto en la columna de acciones)
-                if st.button("", key=f"fila_rfp_{index}", help="Seleccionar fila", args=(index,)):
+                cols = st.columns([4, 2, 2, 3])  # Ajustar el ancho de las columnas
+                
+                # Columna 0: Nombre archivo
+                if cols[0].button(f"{row['nombre_archivo']}", key=f"nombre_archivo_{index}"):
                     st.session_state["current_page"] = "Detalle RFP"
                     st.session_state["selected_rfp_id"] = rfps_a_mostrar[index]["id"]
-                    st.session_state["rfp_text"] = clean_text(rfps_a_mostrar[index]["contenido"])
                     st.rerun()
+                
+                # Columna 1: Cliente
+                if cols[1].button(f"{row['cliente']}", key=f"cliente_{index}"):
+                    st.session_state["current_page"] = "Detalle RFP"
+                    st.session_state["selected_rfp_id"] = rfps_a_mostrar[index]["id"]
+                    st.rerun()
+                
+                # Columna 2: Fecha
+                if cols[2].button(f"{row['fecha']}", key=f"fecha_{index}"):
+                    st.session_state["current_page"] = "Detalle RFP"
+                    st.session_state["selected_rfp_id"] = rfps_a_mostrar[index]["id"]
+                    st.rerun()
+                
+                # Columna 3: Acciones
+                with cols[3]:
+                    if st.button("📄 ", key=f"seleccionar_rfp_{index}", help="Seleccionar RFP"):
+                        st.session_state["rfp_text"] = clean_text(rfps_a_mostrar[index]["contenido"])
+                        st.toast(f"RFP '{row['nombre_archivo']}' seleccionada.", icon="📄")
                     
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
                 if st.button("⬇️ Mostrar más"):
