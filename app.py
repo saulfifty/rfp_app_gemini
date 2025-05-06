@@ -256,25 +256,22 @@ if st.session_state["logged_in"]:
             df_rfps = df_rfps.drop(columns=['fecha_obj'])
 
             # Agregar columnas seleccionables para las acciones
-            df_rfps['Ver'] = ""
-            df_rfps['Seleccionar'] = ""
+            
+            df_rfps['Ver'] = "📄 Ver"
+            df_rfps['Seleccionar'] = "✅ Seleccionar"
 
             # Configurar las columnas seleccionables
             st.write("### Lista de RFPs con Acciones")
             edited_df = st.data_editor(
                 df_rfps[['nombre_archivo', 'cliente', 'fecha', 'Ver', 'Seleccionar']],
                 column_config={
-                    "Ver": st.column_config.SelectboxColumn(
+                    "Ver": st.column_config.CheckboxColumn(
                         "Ver",
                         help="Selecciona si deseas ver esta RFP",
-                        options=["", "📄 Ver"],
-                        required=False,
                     ),
-                    "Seleccionar": st.column_config.SelectboxColumn(
+                    "Seleccionar": st.column_config.CheckboxColumn(
                         "Seleccionar",
                         help="Selecciona si deseas seleccionar esta RFP",
-                        options=["", "✅ Seleccionar"],
-                        required=False,
                     ),
                 },
                 hide_index=True,
@@ -282,11 +279,11 @@ if st.session_state["logged_in"]:
 
             # Procesar las acciones seleccionadas
             for index, row in edited_df.iterrows():
-                if row['Ver'] == "📄 Ver":
+                if row['Ver']:
                     st.session_state["current_page"] = "Detalle RFP"
                     st.session_state["selected_rfp_id"] = rfps_a_mostrar[index]["id"]
                     st.rerun()
-                elif row['Seleccionar'] == "✅ Seleccionar":
+                elif row['Seleccionar']:
                     st.session_state["rfp_text"] = clean_text(rfps_a_mostrar[index]["contenido"])
                     st.toast(f"RFP '{row['nombre_archivo']}' seleccionada.", icon="✅")
                     
