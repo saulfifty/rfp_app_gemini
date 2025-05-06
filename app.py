@@ -255,30 +255,34 @@ if st.session_state["logged_in"]:
             # Eliminar la columna fecha_obj ya que no se necesita en la tabla
             df_rfps = df_rfps.drop(columns=['fecha_obj'])
 
-            st.write("### Lista de RFPs con Acciones")
-            cols = st.columns([4, 2, 2, 2, 3])  # Ajustar el ancho de las columnas
-            cols[0].write("### Nombre del archivo")
-            cols[1].write("### Cliente")
-            cols[2].write("### Fecha")
-            cols[3].write("### Ver")
-            cols[4].write("### Seleccionar")
-            
-            for index, row in df_rfps.iterrows():
-                cols = st.columns([4, 2, 2, 2, 3])
-                cols[0].write(row['nombre_archivo'])
-                cols[1].write(row['cliente'])
-                cols[2].write(row['fecha'])
+            # Mostrar los nombres de las columnas
+            st.markdown("<h2 style='font-family: Arial, sans-serif; text-align: center; color: #4A90E2;'>Lista de RFPs con Acciones</h2>", unsafe_allow_html=True)
 
-                # Botón para "Ver"
+            # Encabezados de las columnas con diseño
+            cols = st.columns([4, 2, 2, 1, 1])  # Ajustar el ancho de las columnas
+            cols[0].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center; color: #333;'>Nombre archivo</h4>", unsafe_allow_html=True)
+            cols[1].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center; color: #333;'>Cliente</h4>", unsafe_allow_html=True)
+            cols[2].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center; color: #333;'>Fecha</h4>", unsafe_allow_html=True)
+            cols[3].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center; color: #333;'>Ver</h4>", unsafe_allow_html=True)
+            cols[4].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center; color: #333;'>Seleccionar</h4>", unsafe_allow_html=True)
+
+            # Agregar filas con los datos y botones para las acciones
+            for index, row in df_rfps.iterrows():
+                cols = st.columns([4, 2, 2, 1, 1])  # Ajustar el ancho de las columnas
+                cols[0].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center; color: #555;'>{row['nombre_archivo']}</p>", unsafe_allow_html=True)
+                cols[1].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center; color: #555;'>{row['cliente']}</p>", unsafe_allow_html=True)
+                cols[2].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center; color: #555;'>{row['fecha']}</p>", unsafe_allow_html=True)
+
+                # Botón para "Ver" con diseño
                 if cols[3].button("📄 Ver", key=f"ver_rfp_{index}"):
                     st.session_state["current_page"] = "Detalle RFP"
                     st.session_state["selected_rfp_id"] = rfps_a_mostrar[index]["id"]
                     st.rerun()
 
-                # Botón para "Seleccionar"
+                # Botón para "Seleccionar" con diseño
                 if cols[4].button("✅ Seleccionar", key=f"seleccionar_rfp_{index}"):
                     st.session_state["rfp_text"] = clean_text(rfps_a_mostrar[index]["contenido"])
-                    st.toast(f"RFP '{row['nombre_archivo']}' seleccionada.", icon="✅")
+                    st.toast(f"<span style='font-family: Arial, sans-serif; font-size: 14px; color: #4CAF50;'>RFP '{row['nombre_archivo']}' seleccionada.</span>", icon="✅")
                     
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
                 if st.button("⬇️ Mostrar más"):
