@@ -267,19 +267,19 @@ if st.session_state["logged_in"]:
                 cols = st.columns([4, 2, 2, 3])  # Ajustar el ancho de las columnas
                 
                 # Columna 0: Nombre archivo
-                if cols[0].button(f"{row['nombre_archivo']}", key=f"nombre_archivo_{index}"):
+                if cols[0].button(f"{row['nombre_archivo']}", key=f"nombre_archivo_{index}", help="Ver detalle RFP"):
                     st.session_state["current_page"] = "Detalle RFP"
                     st.session_state["selected_rfp_id"] = rfps_a_mostrar[index]["id"]
                     st.rerun()
                 
                 # Columna 1: Cliente
-                if cols[1].button(f"{row['cliente']}", key=f"cliente_{index}"):
+                if cols[1].button(f"{row['cliente']}", key=f"cliente_{index}", help="Ver detalle RFP"):
                     st.session_state["current_page"] = "Detalle RFP"
                     st.session_state["selected_rfp_id"] = rfps_a_mostrar[index]["id"]
                     st.rerun()
                 
                 # Columna 2: Fecha
-                if cols[2].button(f"{row['fecha']}", key=f"fecha_{index}"):
+                if cols[2].button(f"{row['fecha']}", key=f"fecha_{index}", help="Ver detalle RFP"):
                     st.session_state["current_page"] = "Detalle RFP"
                     st.session_state["selected_rfp_id"] = rfps_a_mostrar[index]["id"]
                     st.rerun()
