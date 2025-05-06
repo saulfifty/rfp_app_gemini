@@ -259,19 +259,19 @@ if st.session_state["logged_in"]:
             st.markdown("<h2 style='font-family: Arial, sans-serif; text-align: center; color: #4A90E2;'>Lista de RFPs con Acciones</h2>", unsafe_allow_html=True)
 
             # Encabezados de las columnas con diseño
-            cols = st.columns([4, 2, 2, 1, 1])  # Ajustar el ancho de las columnas
-            cols[0].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center; color: #333;'>Nombre archivo</h4>", unsafe_allow_html=True)
-            cols[1].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center; color: #333;'>Cliente</h4>", unsafe_allow_html=True)
-            cols[2].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center; color: #333;'>Fecha</h4>", unsafe_allow_html=True)
-            cols[3].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center; color: #333;'>Ver</h4>", unsafe_allow_html=True)
-            cols[4].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center; color: #333;'>Seleccionar</h4>", unsafe_allow_html=True)
+            cols = st.columns([4, 2, 2, 1, 2])  # Ajustar el ancho de las columnas
+            cols[0].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Nombre archivo</h4>", unsafe_allow_html=True)
+            cols[1].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Cliente</h4>", unsafe_allow_html=True)
+            cols[2].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Fecha</h4>", unsafe_allow_html=True)
+            cols[3].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Ver</h4>", unsafe_allow_html=True)
+            cols[4].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Seleccionar</h4>", unsafe_allow_html=True)
 
             # Agregar filas con los datos y botones para las acciones
             for index, row in df_rfps.iterrows():
-                cols = st.columns([4, 2, 2, 1, 1])  # Ajustar el ancho de las columnas
-                cols[0].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center; color: #555;'>{row['nombre_archivo']}</p>", unsafe_allow_html=True)
-                cols[1].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center; color: #555;'>{row['cliente']}</p>", unsafe_allow_html=True)
-                cols[2].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center; color: #555;'>{row['fecha']}</p>", unsafe_allow_html=True)
+                cols = st.columns([4, 2, 2, 1, 2])  # Ajustar el ancho de las columnas
+                cols[0].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['nombre_archivo']}</p>", unsafe_allow_html=True)
+                cols[1].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['cliente']}</p>", unsafe_allow_html=True)
+                cols[2].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['fecha']}</p>", unsafe_allow_html=True)
 
                 # Botón para "Ver" con diseño
                 if cols[3].button("📄 Ver", key=f"ver_rfp_{index}"):
