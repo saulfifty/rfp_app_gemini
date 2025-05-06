@@ -296,7 +296,7 @@ if st.session_state["logged_in"]:
                         """,
                         unsafe_allow_html=True
                     )
-                    if st.button("Seleccionar", key=f"seleccionar_rfp_{index}"):
+                    if st.button("", key=f"seleccionar_rfp_{index}", help="Seleccionar RFP"):
                         st.session_state["rfp_text"] = clean_text(rfps_a_mostrar[index]["contenido"])
                         st.toast(f"RFP '{row['nombre_archivo']}' seleccionada.", icon="📄")
                     
