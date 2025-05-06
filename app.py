@@ -281,8 +281,9 @@ if st.session_state["logged_in"]:
                 # Aplicar estilo para que la fila sea interactiva
                 row_style = f"""
                 <style>
-                    div[data-testid="stHorizontalBlock"] > div:nth-child({index + 2}):hover p {{
+                    div[data-testid="stHorizontalBlock"] > div:nth-child({index + 2}) p:hover {{
                         color: #ff4d4d;
+                        cursor: pointer;
                     }}
                 </style>
                 """
