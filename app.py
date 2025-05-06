@@ -258,20 +258,25 @@ if st.session_state["logged_in"]:
 
             # Mostrar la tabla de RFPs
             st.write("### Lista de RFPs")
-            st.dataframe(df_rfps[['nombre_archivo', 'cliente', 'fecha']], width=800)
+            st.dataframe(df_rfps[['Nombre del archivo', 'Cliente', 'Fecha']], width=800)
 
             # Agregar botones de acción para cada RFP
+            
             for index, rfp in df_rfps.iterrows():
-                col1, col2 = st.columns([1, 1])
-                with col1:
+                cols = st.columns([4, 2, 2, 2])
+                cols[0].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{rfp['nombre_archivo']}</p>", unsafe_allow_html=True)
+                cols[1].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{rfp['cliente']}</p>", unsafe_allow_html=True)
+                cols[2].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{rfp['fecha']}</p>", unsafe_allow_html=True)
+                
+                with cols[3]:
                     if st.button("📄 Ver", key=f"ver_rfp_{rfp['id']}"):
                         st.session_state["current_page"] = "Detalle RFP"
                         st.session_state["selected_rfp_id"] = rfp["id"]
                         st.rerun()
-                with col2:
                     if st.button("✅ Seleccionar", key=f"seleccionar_rfp_{rfp['id']}"):
                         st.session_state["rfp_text"] = clean_text(rfp["contenido"])
                         st.toast(f"RFP '{rfp['nombre_archivo']}' seleccionada.", icon="✅")
+
 
 
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
