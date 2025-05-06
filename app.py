@@ -268,9 +268,12 @@ if st.session_state["logged_in"]:
                 row_container = st.container()
                 with row_container:
                     cols = st.columns([4, 2, 2, 3])  # Ajustar el ancho de las columnas
-                    cols[0].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['nombre_archivo']}</p>", unsafe_allow_html=True)
-                    cols[1].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['cliente']}</p>", unsafe_allow_html=True)
-                    cols[2].markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['fecha']}</p>", unsafe_allow_html=True)
+                    with cols[0]:
+                        st.markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['nombre_archivo']}</p>", unsafe_allow_html=True)
+                    with cols[1]:
+                        st.markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['cliente']}</p>", unsafe_allow_html=True)
+                    with cols[2]:
+                        st.markdown(f"<p style='font-family: Arial, sans-serif; font-size: 14px; text-align: center;'>{row['fecha']}</p>", unsafe_allow_html=True)
                     
                     # Columna de acciones
                     with cols[3]:
@@ -281,18 +284,30 @@ if st.session_state["logged_in"]:
                 # Aplicar estilo para que la fila sea interactiva
                 row_style = f"""
                 <style>
-                    div[data-testid="stHorizontalBlock"] > div:nth-child({index + 2}) p:hover {{
-                        color: #ff4d4d;
+                    div[data-testid="stHorizontalBlock"] > div:nth-child({index + 2}) {{
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        padding: 5px;
+                        border-radius: 5px;
+                        transition: background-color 0.3s ease;
+                    }}
+                    div[data-testid="stHorizontalBlock"] > div:nth-child({index + 2}):hover {{
+                        background-color: rgba(255, 77, 77, 0.1);
                         cursor: pointer;
+                    }}
+                    div[data-testid="stHorizontalBlock"] > div:nth-child({index + 2}):hover p {{
+                        color: #ff4d4d;
                     }}
                 </style>
                 """
                 st.markdown(row_style, unsafe_allow_html=True)
 
-                # Detectar clic en la fila
-                if st.button("", key=f"ver_rfp_{index}"):
+                # Detectar clic en la fila (excepto en la columna de acciones)
+                if st.button("", key=f"fila_rfp_{index}", help="Seleccionar fila", args=(index,)):
                     st.session_state["current_page"] = "Detalle RFP"
                     st.session_state["selected_rfp_id"] = rfps_a_mostrar[index]["id"]
+                    st.session_state["rfp_text"] = clean_text(rfps_a_mostrar[index]["contenido"])
                     st.rerun()
                     
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
