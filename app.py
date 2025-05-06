@@ -286,17 +286,7 @@ if st.session_state["logged_in"]:
                 
                 # Columna 3: Acciones
                 with cols[3]:
-                    st.markdown(
-                        """
-                        <div style="display: flex; justify-content: center;">
-                            <button style="background-color: transparent; border: none; cursor: pointer;" title="Seleccionar RFP">
-                                📄
-                            </button>
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-                    if st.button("", key=f"seleccionar_rfp_{index}", help="Seleccionar RFP"):
+                    if st.button("📄", key=f"seleccionar_rfp_{index}", help="Seleccionar RFP"):
                         st.session_state["rfp_text"] = clean_text(rfps_a_mostrar[index]["contenido"])
                         st.toast(f"RFP '{row['nombre_archivo']}' seleccionada.", icon="📄")
                     
