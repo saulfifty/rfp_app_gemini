@@ -289,6 +289,7 @@ if st.session_state["logged_in"]:
                 # Columna 3: Acciones
                 if cols[3].button("Seleccionar 📄", key=f"seleccionar_rfp_{index}", help="Seguir trabajando con la RFP"):
                     st.session_state["rfp_text"] = clean_text(rfps_a_mostrar[index]["contenido"])
+                    st.session_state["rfp_id"] = rfps_a_mostrar[index]["id"]
                     st.toast(f"RFP '{row['nombre_archivo']}' seleccionada.", icon="📄")
                     
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
