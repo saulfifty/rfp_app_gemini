@@ -247,13 +247,13 @@ if st.session_state["logged_in"]:
             rfps_a_mostrar = rfps_filtradas[:st.session_state["rfps_visible"]]
 
             # Crear un DataFrame para mostrar las RFPs en una tabla
-            df_rfps = pd.DataFrame(rfps_a_mostrar)
+            rfps_a_mostrar = pd.DataFrame(rfps_a_mostrar)
 
             # Convertir la columna de fecha a formato de cadena
-            df_rfps['fecha'] = df_rfps['fecha_obj'].dt.strftime("%d/%m/%Y %H:%M")
+            rfps_a_mostrar['fecha'] = rfps_a_mostrar['fecha_obj'].dt.strftime("%d/%m/%Y %H:%M")
 
             # Eliminar la columna fecha_obj ya que no se necesita en la tabla
-            df_rfps = df_rfps.drop(columns=['fecha_obj'])
+            rfps_a_mostrar = rfps_a_mostrar.drop(columns=['fecha_obj'])
             
             st.markdown("<h2 style='font-family: Arial, sans-serif; text-align: center; color: #4A90E2;'>Lista de RFPs con Acciones</h2>", unsafe_allow_html=True)
 
@@ -265,7 +265,7 @@ if st.session_state["logged_in"]:
             cols[3].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Acciones</h4>", unsafe_allow_html=True)
 
             # Agregar filas con los datos y funcionalidad de selección al hacer clic en las columnas 0, 1 o 2
-            for index, row in df_rfps.iterrows():
+            for index, row in rfps_a_mostrar.iterrows():
                 cols = st.columns([4, 2, 2, 3])  # Ajustar el ancho de las columnas
                 
                 # Columna 0: Nombre archivo
@@ -294,8 +294,8 @@ if st.session_state["logged_in"]:
                     
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
                 if st.button("⬇️ Mostrar más"):
-                    st.session_state["rfps_visible"] = min(st.session_state["rfps_visible"] + 5, len(rfps_filtradas))
-                    st.experimental_rerun()
+                    st.session_state["rfps_visible"] += 5
+                    
     
     elif st.session_state["current_page"] == "Detalle RFP":
         rfp_id = st.session_state.get("selected_rfp_id")
