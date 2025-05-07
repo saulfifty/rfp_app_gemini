@@ -247,13 +247,13 @@ if st.session_state["logged_in"]:
             rfps_a_mostrar = rfps_filtradas[:st.session_state["rfps_visible"]]
 
             # Crear un DataFrame para mostrar las RFPs en una tabla
-            rfps_a_mostrar = pd.DataFrame(rfps_a_mostrar)
+            df_rfps = pd.DataFrame(rfps_a_mostrar)
 
             # Convertir la columna de fecha a formato de cadena
-            rfps_a_mostrar['fecha'] = rfps_a_mostrar['fecha_obj'].dt.strftime("%d/%m/%Y %H:%M")
+            df_rfps['fecha'] = df_rfps['fecha_obj'].dt.strftime("%d/%m/%Y %H:%M")
 
             # Eliminar la columna fecha_obj ya que no se necesita en la tabla
-            rfps_a_mostrar = rfps_a_mostrar.drop(columns=['fecha_obj'])
+            df_rfps = df_rfps.drop(columns=['fecha_obj'])
             
             st.markdown("<h2 style='font-family: Arial, sans-serif; text-align: center; color: #4A90E2;'>Lista de RFPs con Acciones</h2>", unsafe_allow_html=True)
 
@@ -265,7 +265,7 @@ if st.session_state["logged_in"]:
             cols[3].markdown("<h4 style='font-family: Arial, sans-serif; text-align: center;'>Acciones</h4>", unsafe_allow_html=True)
 
             # Agregar filas con los datos y funcionalidad de selección al hacer clic en las columnas 0, 1 o 2
-            for index, row in rfps_a_mostrar.iterrows():
+            for index, row in df_rfps.iterrows():
                 cols = st.columns([4, 2, 2, 3])  # Ajustar el ancho de las columnas
                 
                 # Columna 0: Nombre archivo
@@ -289,13 +289,12 @@ if st.session_state["logged_in"]:
                 # Columna 3: Acciones
                 if cols[3].button("Seleccionar 📄", key=f"seleccionar_rfp_{index}", help="Seguir trabajando con la RFP"):
                     st.session_state["rfp_text"] = clean_text(rfps_a_mostrar[index]["contenido"])
-                    st.session_state["rfp_id"] = rfps_a_mostrar[index]["id"]
+                    st.session_state["rfp_id"] = rfps_a_mostrar[index]["id"] 
                     st.toast(f"RFP '{row['nombre_archivo']}' seleccionada.", icon="📄")
                     
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
                 if st.button("⬇️ Mostrar más"):
                     st.session_state["rfps_visible"] += 5
-                    
     
     elif st.session_state["current_page"] == "Detalle RFP":
         rfp_id = st.session_state.get("selected_rfp_id")
