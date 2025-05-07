@@ -294,7 +294,8 @@ if st.session_state["logged_in"]:
                     
             if st.session_state["rfps_visible"] < len(rfps_filtradas):
                 if st.button("⬇️ Mostrar más"):
-                    st.session_state["rfps_visible"] += 5
+                    st.session_state["rfps_visible"] = min(st.session_state["rfps_visible"] + 5, len(rfps_filtradas))
+                    st.experimental_rerun()
     
     elif st.session_state["current_page"] == "Detalle RFP":
         rfp_id = st.session_state.get("selected_rfp_id")
