@@ -13,7 +13,7 @@ from utils.ai_client_gemini import (
     get_ai_clarifying_questions_gemini, get_ai_resource_evaluation_gemini, get_ai_index_structure_gemini,
     get_ai_executive_summary_gemini, get_ai_proposed_solution_gemini, get_ai_value_added_gemini,
     get_ai_experience_credentials_gemini, get_ai_project_team_gemini, get_ai_timeline_budget_gemini,
-    get_ai_requirements_compliance_gemini, generate_follow_up_steps_gemini
+    get_ai_requirements_compliance_gemini, generate_follow_up_steps_gemini, get_ai_use_cases_gemini
 )
 
 os.environ["WATCHDOG_OBSERVER"] = "false"
@@ -23,7 +23,7 @@ menu_options = {
     "Home": ["Mis RFPs"],
     "Carga y Configuración": ["Cargar RFP", "Configuración General"],
     "Evaluación Inicial": ["Análisis rápido", "Alineación estratégica", "Ventaja Competitiva", "Decisión de Participar"],
-    "Análisis Profundo": ["Comprensión Detallada", "Identificación de 'dolores'", "Preguntas Aclaratorias", "Evaluación de Recursos"],
+    "Análisis Profundo": ["Comprensión Detallada", "Identificación de 'dolores'", "Preguntas Aclaratorias", "Evaluación de Recursos", "Casos de Uso"],
     "Desarrollo de la Propuesta": ["Estructura del Índice", "Resumen ejecutivo", "Solución Propuesta", "Beneficios y Valor Añadido", "Experiencia y Credenciales", "Equipo de Proyecto", "Cronograma y Presupuesto", "Cumplimiento de Requisitos"],
     "Revisión y Aprobación": ["Revisión Interna", "Aprobación Responsable"]
 }
@@ -314,7 +314,7 @@ if st.session_state["logged_in"]:
 
             estructura_rfp = {
                 "Evaluación Inicial": ["Análisis rápido", "Alineación estratégica", "Ventaja Competitiva", "Decisión de Participar"],
-                "Análisis Profundo": ["Comprensión Detallada", "Identificación de 'dolores'", "Preguntas Aclaratorias", "Evaluación de Recursos"],
+                "Análisis Profundo": ["Comprensión Detallada", "Identificación de 'dolores'", "Preguntas Aclaratorias", "Evaluación de Recursos", "Casos de Uso"],
                 "Desarrollo de la Propuesta": ["Estructura del Índice", "Resumen ejecutivo", "Solución Propuesta", "Beneficios y Valor Añadido", "Experiencia y Credenciales", "Equipo de Proyecto", "Cronograma y Presupuesto", "Cumplimiento de Requisitos"],
                 "Revisión y Aprobación": ["Revisión Interna", "Aprobación Responsable"]
             }
@@ -504,6 +504,7 @@ if st.session_state["logged_in"]:
         "Equipo de Proyecto": get_ai_project_team_gemini,
         "Cronograma y Presupuesto": get_ai_timeline_budget_gemini,
         "Cumplimiento de Requisitos": get_ai_requirements_compliance_gemini,
+        "Casos de Uso": get_ai_use_cases_gemini
     }
 
     reset_analysis()

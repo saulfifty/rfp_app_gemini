@@ -83,7 +83,8 @@ def generate_follow_up_steps_gemini(summary_text, category):
         "Experiencia y Credenciales": "Resume la experiencia relevante en proyectos similares y logros clave.",
         "Equipo de Proyecto": "Presenta el equipo con roles y responsabilidades relevantes.",
         "Cronograma y Presupuesto": "Proporciona un cronograma detallado y estimación de presupuesto.",
-        "Cumplimiento de Requisitos": "Valida el cumplimiento de requisitos y sugiere áreas de ajuste."
+        "Cumplimiento de Requisitos": "Valida el cumplimiento de requisitos y sugiere áreas de ajuste.",
+        "Casos de Uso": "Genera ejemplos de casos de uso relevantes para la propuesta."
     }
     prompt = prompts.get(category, "Genera pasos claros y accionables.")
     gemini_prompt = f"{prompt}\n\nResumen del análisis:\n{summary_text.strip()}\n\nPasos sugeridos para abordar los puntos clave mencionados en el análisis:"
@@ -179,3 +180,10 @@ def get_ai_timeline_budget_gemini(rfp_text, category="Cronograma y Presupuesto")
 def get_ai_requirements_compliance_gemini(rfp_text, category="Cumplimiento de Requisitos"):
     prompt = "Como experto en cumplimiento de requisitos, valida si la propuesta cumple con todos los requisitos descritos en la RFP. Indica posibles brechas o áreas que requieran ajustes o aclaraciones."
     return analyze_rfp_gemini(rfp_text, category, prompt)
+
+
+def get_ai_use_cases_gemini(rfp_text, category="Casos de Uso"):
+    prompt = ("Como experto en análisis de casos de uso, identifica posibles escenarios prácticos en los que la solución propuesta "
+                "pueda ser aplicada para satisfacer los requisitos del cliente. Proporciona ejemplos claros y detallados que demuestren "
+                "el valor y la efectividad de la solución en contextos reales. Responde en español de manera clara y profesional.")
+    return analyze_rfp_gemini(rfp_text, category, prompt)       
